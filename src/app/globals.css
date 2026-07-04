@@ -16,6 +16,39 @@
   --card-border: rgba(255, 50, 50, 0.15);
 }
 
+:root[data-theme='valorant'] {
+  --background: #0f1923;
+  --foreground: #ece8e1;
+  --accent: #ff4655;
+  --accent-glow: rgba(255, 70, 85, 0.6);
+  --card-bg: rgba(15, 25, 35, 0.8);
+  --card-border: rgba(255, 70, 85, 0.3);
+}
+
+:root[data-theme='minecraft'] {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+  --accent: #55ff55;
+  --accent-glow: rgba(85, 255, 85, 0.6);
+  --card-bg: rgba(26, 26, 26, 0.8);
+  --card-border: rgba(85, 255, 85, 0.3);
+}
+
+:root[data-theme='easter-egg'] {
+  --background: #000000;
+  --foreground: #00ff00;
+  --accent: #ff00ff;
+  --accent-glow: rgba(255, 0, 255, 0.8);
+  --card-bg: rgba(20, 0, 20, 0.9);
+  --card-border: #00ffff;
+  animation: rgb-shift 2s infinite linear;
+}
+
+@keyframes rgb-shift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

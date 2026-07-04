@@ -35,8 +35,8 @@ export default function LatestVideo() {
       <h2>{isLive ? '🔴 Live on Twitch' : 'Latest Video'}</h2>
       
       {isLive ? (
-        <div className="twitch-container" style={{ display: 'flex', gap: '1rem', minHeight: '500px', flexWrap: 'wrap' }}>
-          <div className="video-player glass" style={{ flex: '1 1 600px', padding: '0', overflow: 'hidden', minHeight: '300px' }}>
+        <div className="twitch-container" style={{ display: 'flex', gap: '1rem', minHeight: '500px', position: 'relative' }}>
+          <div className="video-player glass" style={{ width: '100%', padding: '0', overflow: 'hidden', minHeight: '500px' }}>
             <iframe
               src="https://player.twitch.tv/?channel=ArashLIVE&parent=arashyt.ca&parent=localhost&parent=8135f22a.arashyt-ca.pages.dev"
               frameBorder="0"
@@ -46,12 +46,13 @@ export default function LatestVideo() {
               width="100%">
             </iframe>
           </div>
-          <div className="twitch-chat glass" style={{ flex: '1 1 300px', padding: '0', overflow: 'hidden', minHeight: '400px', maxWidth: '100%' }}>
+          <div className="twitch-chat glass" style={{ position: 'absolute', top: '10px', right: '10px', bottom: '10px', width: '350px', padding: '0', overflow: 'hidden', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', border: '1px solid var(--accent)', borderRadius: '12px' }}>
             <iframe
               id="twitch-chat-embed"
               src="https://www.twitch.tv/embed/ArashLIVE/chat?parent=arashyt.ca&parent=localhost&parent=8135f22a.arashyt-ca.pages.dev&darkpopout"
               height="100%"
-              width="100%">
+              width="100%"
+              style={{ opacity: 0.9 }}>
             </iframe>
           </div>
         </div>

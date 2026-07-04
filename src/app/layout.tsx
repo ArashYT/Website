@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 import ThemeToggle from "@/components/ThemeToggle";
+import KonamiCode from "@/components/KonamiCode";
 
 export default function RootLayout({
   children,
@@ -20,24 +21,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
-      <body>
+    <html lang="en" className="dark">
+      <body className={`${inter.variable}`}>
         <script dangerouslySetInnerHTML={{__html: `
           (function() {
             try {
-              var saved = localStorage.getItem('theme');
-              if (saved === 'light') { document.documentElement.classList.remove('dark'); }
-              else { document.documentElement.classList.add('dark'); }
+              var theme = localStorage.getItem('theme');
+              if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+              } else if (theme && theme !== 'dark') {
+                document.documentElement.setAttribute('data-theme', theme);
+              }
             } catch (e) {}
           })();
         `}} />
+        <KonamiCode />
         <div className="layout-wrapper">
           <header className="glass" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
             <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--accent)', fontWeight: '900', letterSpacing: '-0.5px' }}>Arash</h1>
-            <nav style={{ display: 'flex', gap: '1.5rem', fontWeight: 600 }}>
+            <nav style={{ display: 'flex', gap: '1.2rem', fontWeight: 600, flexWrap: 'wrap', justifyContent: 'center' }}>
               <a href="/" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Home</a>
+              <a href="/series" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Series</a>
+              <a href="/polls" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Polls</a>
+              <a href="/hall-of-fame" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Wall of Fame</a>
+              <a href="/art" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Fan Art</a>
               <a href="/gear" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Gear</a>
-              <a href="/clips" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Submit Clip</a>
+              <a href="/clips" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Clips</a>
               <a href="/links" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Links</a>
             </nav>
             <ThemeToggle />

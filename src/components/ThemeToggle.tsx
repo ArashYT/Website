@@ -1,50 +1,60 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 
+const THEMES = [
+  { id: 'dark', label: '🌙 Default Dark' },
+  { id: 'light', label: '☀️ Default Light' },
+  { id: 'valorant', label: '🔴 Valorant' },
+  { id: 'minecraft', label: '🟩 Minecraft' }
+];
+
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(true); // Default to premium dark mode
+  const [currentTheme, setCurrentTheme] = useState('dark');
 
   useEffect(() => {
-    // Check local storage on mount
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light') {
-      setIsDark(false);
-      document.documentElement.classList.remove('dark');
-    } else {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
+    const saved = localStorage.getItem('theme') || 'dark';
+    applyTheme(saved);
   }, []);
 
-  const toggleTheme = () => {
-    if (isDark) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-      setIsDark(false);
-    } else {
+  const applyTheme = (themeId: string) => {
+    setCurrentTheme(themeId);
+    localStorage.setItem('theme', themeId);
+    
+    // Reset all
+    document.documentElement.classList.remove('dark');
+    document.documentElement.removeAttribute('data-theme');
+    
+    if (themeId === 'dark') {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      setIsDark(true);
+    } else if (themeId !== 'light') {
+      document.documentElement.setAttribute('data-theme', themeId);
     }
   };
 
   return (
-    <button 
-      onClick={toggleTheme} 
-      className="glass" 
-      style={{
-        position: 'fixed',
-        top: '1rem',
-        right: '1rem',
-        padding: '0.5rem 1rem',
-        border: 'none',
-        cursor: 'pointer',
-        fontSize: '1.2rem',
-        zIndex: 100
-      }}
-      title="Toggle Dark/Light Mode"
-    >
-      {isDark ? '☀️' : '🌙'}
-    </button>
+    <div style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 100 }}>
+      <select 
+        className="glass"
+        value={currentTheme}
+        onChange={(e) => applyTheme(e.target.value)}
+        style={{
+          padding: '0.5rem 1rem',
+          border: '1px solid var(--card-border)',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          background: 'var(--card-bg)',
+          color: 'var(--foreground)',
+          fontSize: '0.9rem',
+          fontWeight: 'bold',
+          outline: 'none'
+        }}
+      >
+        {THEMES.map(t => (
+          <option key={t.id} value={t.id} style={{ background: '#000', color: '#fff' }}>
+            {t.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
