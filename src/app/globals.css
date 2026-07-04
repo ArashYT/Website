@@ -1,0 +1,214 @@
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --accent: #b30000;
+  --accent-glow: rgba(179, 0, 0, 0.4);
+  --card-bg: rgba(30, 0, 0, 0.6);
+  --card-border: rgba(255, 0, 0, 0.2);
+}
+
+:root.dark {
+  --background: #050000;
+  --foreground: #ededed;
+  --accent: #d32f2f;
+  --accent-glow: rgba(211, 47, 47, 0.6);
+  --card-bg: rgba(20, 0, 0, 0.8);
+  --card-border: rgba(255, 50, 50, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  70% { box-shadow: 0 0 15px 10px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.live-indicator {
+  position: relative;
+}
+.live-indicator::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  animation: pulseGlow 2s infinite;
+  pointer-events: none;
+}
+
+/* Layout Wrapper */
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+header {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(90deg, var(--foreground), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+footer {
+  margin-top: auto;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* Home Container */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.hero-section {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.hero-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Live Indicator */
+.live-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-color: var(--accent);
+}
+.pulse-dot {
+  width: 12px;
+  height: 12px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  animation: pulseGlow 1.5s infinite;
+}
+.live-text {
+  font-weight: 700;
+  color: var(--accent);
+  flex-grow: 1;
+  margin-left: 1rem;
+}
+.watch-btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+.watch-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Social Links */
+.social-links-container h2,
+.latest-video-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--card-border);
+  padding-bottom: 0.5rem;
+}
+.social-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.social-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: var(--foreground);
+  transition: all 0.3s ease;
+  gap: 1rem;
+}
+.social-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--hover-color, var(--accent));
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.social-card .icon {
+  font-size: 1.5rem;
+}
+.social-card .name {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Latest Video */
+.video-player {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.video-player:hover {
+  transform: scale(1.02);
+}
+.video-placeholder {
+  text-align: center;
+}
+.play-icon {
+  font-size: 3rem;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 1rem;
+}
+

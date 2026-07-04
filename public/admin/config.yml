@@ -1,0 +1,18 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images"
+public_folder: "/images"
+
+collections:
+  - name: "socials"
+    label: "Social Links"
+    folder: "content/socials"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "URL", name: "url", widget: "string"}
+      - {label: "Icon", name: "icon", widget: "string"}
+      - {label: "Brand Color", name: "color", widget: "string", default: "#ff0000"}
