@@ -1,25 +1,36 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function PollsPage() {
   const [votedFor, setVotedFor] = useState<number | null>(null);
+  const [pollData, setPollData] = useState<any>(null);
 
-  const poll = {
-    question: "What game should I play on the next stream?",
-    options: [
-      { id: 1, text: "Valorant Ranked (Immortal Push)", votes: 145 },
-      { id: 2, text: "Minecraft Hardcore", votes: 89 },
-      { id: 3, text: "Elden Ring DLC", votes: 210 },
-      { id: 4, text: "Just Chatting / Setup Review", votes: 55 }
-    ]
-  };
+  useEffect(() => {
+    fetch('/api/polls')
+      .then(res => res.json())
+      .then(data => setPollData(data));
+  }, []);
 
-  const totalVotes = poll.options.reduce((a, b) => a + b.votes, 0) + (votedFor ? 1 : 0);
-
-  const handleVote = (id: number) => {
+  const handleVote = async (id: number) => {
     if (votedFor) return;
     setVotedFor(id);
+    
+    const res = await fetch('/api/polls', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ optionId: id })
+    });
+    const data = await res.json();
+    if (data.success) {
+      setPollData(data.polls);
+    }
   };
+
+  if (!pollData) {
+    return <div style={{ textAlign: 'center', padding: '4rem' }}>Loading poll data...</div>;
+  }
+
+  const totalVotes = pollData.options.reduce((a: any, b: any) => a + b.votes, 0);
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem' }}>
@@ -27,13 +38,12 @@ export default function PollsPage() {
       <p style={{ textAlign: 'center', opacity: 0.8, marginBottom: '3rem' }}>Have your voice heard! Vote on stream decisions.</p>
 
       <div className="glass" style={{ padding: '2rem', borderRadius: '16px' }}>
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>🔥 {poll.question}</h2>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>🔥 {pollData.question}</h2>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {poll.options.map(opt => {
+          {pollData.options.map((opt: any) => {
             const isVoted = votedFor === opt.id;
-            const currentVotes = opt.votes + (isVoted ? 1 : 0);
-            const percentage = Math.round((currentVotes / (totalVotes || 1)) * 100);
+            const percentage = Math.round((opt.votes / (totalVotes || 1)) * 100);
 
             return (
               <button 

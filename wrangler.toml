@@ -1,0 +1,7 @@
+name = "arashyt-ca"
+pages_build_output_dir = "out"
+compatibility_date = "2024-03-20"
+
+[[kv_namespaces]]
+binding = "ARASH_DB"
+id = "a6858b1bd8c642ad8432bfd5644fea31"
