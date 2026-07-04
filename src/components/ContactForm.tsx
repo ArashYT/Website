@@ -36,7 +36,7 @@ export default function ContactForm() {
       ) : (
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <input type="hidden" name="subject" value="New Business Inquiry from Website" />
-          <input type="hidden" name="from_name" value="ArashYT Website" />
+          <input type="hidden" name="from_name" value="Arash Website" />
           <input 
             type="email" 
             name="email"

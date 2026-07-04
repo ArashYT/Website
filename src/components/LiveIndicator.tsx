@@ -18,7 +18,7 @@ export default function LiveIndicator() {
   return (
     <div className="live-banner glass live-indicator">
       <div className="pulse-dot"></div>
-      <span className="live-text">ArashYT is LIVE right now!</span>
+      <span className="live-text">Arash is LIVE right now!</span>
       <a href="https://twitch.tv/ArashLIVE" target="_blank" rel="noreferrer" className="watch-btn">
         Watch Now
       </a>

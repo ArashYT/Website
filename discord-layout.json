@@ -1,0 +1,94 @@
+{
+  "serverName": "💬Arash's Hangout",
+  "memberCount": 118,
+  "roles": [
+    "🔇Muted",
+    "⭐Twitch Sub",
+    "═══════{Other Roles}═══════",
+    "carl-bot",
+    "💜Tier 2 Sub",
+    "NightBot",
+    "ClipManager",
+    "═══════{Bot Roles}═══════",
+    "🙏Fortnite Master 6767",
+    "👮Mods",
+    "🔺18+",
+    "✨Server Booster",
+    "🔔Event Ping",
+    "🔴Streaming",
+    "💜Tier 3 Sub",
+    "═══════{Staff Roles}═══════",
+    "🔔Content Ping",
+    "═══════{Main Roles}═══════",
+    "Counting",
+    "😎Admins",
+    "🔔Update Ping",
+    "🔹13-15",
+    "😀Members",
+    "🎬Content Creators",
+    "🚹Male",
+    "❓Other",
+    "✅Verified",
+    "═══════{Personal Roles}═══════",
+    "🤖Bots",
+    "═══════{Custom Roles}═══════",
+    "🏷️VIP",
+    "🔑Bot Key",
+    "☑️Staff Member",
+    "🥩🫷Viper Gooner",
+    "Embed Generator",
+    "👑Arash",
+    "Remoji",
+    "⚠️Limited Access",
+    "🚺Female",
+    "🔸16-17",
+    "🫂Friends",
+    "@everyone",
+    "Dyno",
+    "Dank Memer",
+    "💜Tier 1 Sub",
+    "Streamcord"
+  ],
+  "categories": {
+    "📌Important📌": [
+      "📢updates (Announcement)",
+      "🔔notificaitons (Text)",
+      "🎬stream-clips (Text)",
+      "📕rules (Text)",
+      "✅roles (Text)",
+      "📧links (Text)"
+    ],
+    "💬Social💬": [
+      "🔊Gaming (Voice)",
+      "😉general (Text)",
+      "📷media (Text)",
+      "🔊Gaming 2 (Voice)",
+      "📺reactions-submissions (Forum)",
+      "😹memes (Text)",
+      "🔢counting (Text)",
+      "🤖commands (Text)"
+    ],
+    "💜Subs/Boosters✨": [
+      "🟪sub-events (Text)",
+      "💜General (Voice)",
+      "💜general (Text)"
+    ],
+    "🔒Locked🔒": [
+      "😊Friends (Voice)"
+    ],
+    "🔒Admin🔒": [
+      "😎admin (Text)",
+      "😩Drag Me In Daddy Arash (Voice)",
+      "🔴Arash's Stream Room (Voice)",
+      "🤖admin-commands (Text)",
+      "🔊Admin (Voice)",
+      "📄logs (Text)",
+      "🚪entrance (Text)",
+      "minecraft-chat (Text)"
+    ],
+    "🔒Archive🔒": [
+      "🚮Trash Can (Voice)"
+    ],
+    "NO_CATEGORY": []
+  }
+}
