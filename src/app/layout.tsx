@@ -45,10 +45,6 @@ export default function RootLayout({
               <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--accent)', fontWeight: '900', letterSpacing: '-0.5px' }}>Arash</h1>
               <nav style={{ display: 'flex', gap: '1.2rem', fontWeight: 600, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <a href="/" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Home</a>
-                <a href="/series" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Series</a>
-                <a href="/polls" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Polls</a>
-                <a href="/hall-of-fame" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Wall of Fame</a>
-                <a href="/art" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Fan Art</a>
                 <a href="/gear" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Gear</a>
                 <a href="/clips" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Clips</a>
                 <a href="/links" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Links</a>

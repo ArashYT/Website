@@ -44,11 +44,13 @@ export async function onRequestGet(context: any) {
 
     let accountLevel = 751;
     let cardIcon = null;
+    let cardIconWide = null;
     if (accountRes.ok) {
       const data = await accountRes.json();
       if (data.status === 200 && data.data) {
         accountLevel = data.data.account_level ?? 751;
         cardIcon = data.data.card?.small || null;
+        cardIconWide = data.data.card?.wide || null;
       }
     }
 
@@ -116,6 +118,7 @@ export async function onRequestGet(context: any) {
         riotId,
         accountLevel,
         cardIcon,
+        cardIconWide,
         rankName: mmrData.current_data.currenttierpatched || "Silver 2",
         rankRating: mmrData.current_data.ranking_in_tier ?? 0,
         elo: mmrData.current_data.elo ?? 700,
@@ -136,6 +139,7 @@ export async function onRequestGet(context: any) {
         riotId,
         accountLevel: 751,
         cardIcon: null,
+        cardIconWide: null,
         rankName: "Silver 2",
         rankRating: 0,
         elo: 700,

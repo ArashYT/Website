@@ -21,6 +21,7 @@ interface ValStats {
   riotId: string;
   accountLevel: number;
   cardIcon: string | null;
+  cardIconWide: string | null;
   rankName: string;
   rankRating: number;
   elo: number;
@@ -60,6 +61,7 @@ export default function ValorantStats() {
     riotId: 'TTV ArashLIVE#LWPxD',
     accountLevel: 751,
     cardIcon: null,
+    cardIconWide: null,
     rankName: 'Silver 2',
     rankRating: 0,
     elo: 700,
@@ -191,12 +193,29 @@ export default function ValorantStats() {
             gap: '0.75rem',
             animation: 'fadeIn 0.3s ease-out'
           }}>
+            {/* Player Card Wide Art */}
+            {currentStats.cardIconWide && (
+              <div style={{ 
+                borderRadius: '8px', 
+                overflow: 'hidden', 
+                border: '1px solid var(--card-border)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                marginBottom: '0.25rem'
+              }}>
+                <img 
+                  src={currentStats.cardIconWide} 
+                  alt="Valorant Player Card" 
+                  style={{ width: '100%', height: 'auto', display: 'block' }}
+                />
+              </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Match History
               </span>
               <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>
-                🕒 Live updates (recent games)
+                🕒 Live updates
               </span>
             </div>
 
@@ -249,18 +268,6 @@ export default function ValorantStats() {
             ) : (
               <p style={{ fontSize: '0.8rem', opacity: 0.5, textAlign: 'center', margin: '1rem 0' }}>No recent matches found. Play a game to cache stats!</p>
             )}
-
-            <div style={{ 
-              fontSize: '0.7rem', 
-              opacity: 0.5, 
-              background: 'rgba(255, 255, 255, 0.01)', 
-              border: '1px solid var(--card-border)', 
-              borderRadius: '8px', 
-              padding: '8px',
-              lineHeight: '1.4'
-            }}>
-              🔒 <em>Riot's API constraints prevent real-time in-game live scoreboard spectating. The card automatically fetches stats after every match concludes!</em>
-            </div>
           </div>
         )}
 
