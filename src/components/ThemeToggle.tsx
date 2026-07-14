@@ -32,7 +32,7 @@ export default function ThemeToggle() {
   };
 
   return (
-    <div style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 100 }}>
+    <div style={{ zIndex: 10, display: 'inline-block' }}>
       <select 
         className="glass"
         value={currentTheme}
