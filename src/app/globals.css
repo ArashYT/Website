@@ -273,7 +273,7 @@ footer {
   display: flex;
   gap: 1.5rem;
   width: 100%;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .twitch-container .video-player {
@@ -290,6 +290,7 @@ footer {
 
 .twitch-chat {
   width: 340px;
+  height: 600px;
   flex-shrink: 0;
   padding: 0;
   overflow: hidden;
@@ -317,3 +318,64 @@ footer {
   }
 }
 
+/* Custom Animations & Transitions */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulseBorder {
+  0% { box-shadow: 0 0 0 0 rgba(225, 48, 108, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(225, 48, 108, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(225, 48, 108, 0); }
+}
+
+/* Page mount staggered entrance */
+.layout-wrapper > * {
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.layout-wrapper header { animation-delay: 0.05s; }
+.layout-wrapper main { animation-delay: 0.1s; }
+.layout-wrapper footer { animation-delay: 0.15s; }
+
+/* Scroll Reveal Hook Utility Classes */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Card hover glow & scaling */
+.glass {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass:hover {
+  transform: translateY(-4px);
+  border-color: rgba(225, 48, 108, 0.4);
+  box-shadow: 0 12px 30px var(--accent-glow), 0 0 0 1px rgba(225, 48, 108, 0.2);
+}
+
+/* Button micro-interactions */
+button, .watch-btn, .social-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, box-shadow 0.2s;
+}
+
+button:active, .watch-btn:active, .social-card:active {
+  transform: scale(0.96);
+}

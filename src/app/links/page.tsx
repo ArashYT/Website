@@ -1,4 +1,5 @@
 import SocialLinks from "@/components/SocialLinks";
+import FAQAccordion from "@/components/FAQAccordion";
 import Link from "next/link";
 
 export default function LinksPage() {
@@ -11,6 +12,8 @@ export default function LinksPage() {
       
       <SocialLinks />
 
+      <FAQAccordion />
+      
       <div style={{ textAlign: 'center', marginTop: '3rem' }}>
         <Link href="/" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold' }}>
           &larr; Back to Main Website
