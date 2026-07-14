@@ -12,27 +12,34 @@ import Soundboard from "@/components/Soundboard";
 export default function Home() {
   return (
     <div className="home-container">
-      <div className="content-grid">
-        {/* Left Column (Main Feed) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <LatestVideo />
+      {/* 1. Full-width Twitch Stream / Latest Video Section */}
+      <LatestVideo />
+
+      {/* 2. Responsive Dashboard Grid */}
+      <div className="home-dashboard-grid">
+        {/* Column 1: Twitter & Contact */}
+        <div className="dashboard-column">
           <TweetEmbed />
+          <ContactForm />
         </div>
 
-        {/* Right Column (Dashboard widgets) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {/* Column 2: Stream Info, MC Server & Soundboard */}
+        <div className="dashboard-column">
           <StreamSchedule />
-          <ValorantStats />
           <MinecraftStatus />
           <Soundboard />
+        </div>
+
+        {/* Column 3: Stats, Clips & Socials */}
+        <div className="dashboard-column">
+          <ValorantStats />
           <RandomClip />
           <SocialLinks />
         </div>
       </div>
 
+      {/* 3. Popular Clips Section */}
       <TopClips />
-      
-      <ContactForm />
     </div>
   );
 }

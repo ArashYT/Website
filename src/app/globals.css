@@ -142,13 +142,28 @@ footer {
   margin-bottom: 1rem;
 }
 
-.content-grid {
+/* Dashboard Grid Layout */
+.home-dashboard-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
 }
+
+.dashboard-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .home-dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-  .content-grid {
+  .home-dashboard-grid {
     grid-template-columns: 1fr;
   }
 }
