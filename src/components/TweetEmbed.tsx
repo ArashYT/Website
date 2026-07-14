@@ -37,7 +37,11 @@ const fallbackTweets: MockTweet[] = [
   }
 ];
 
-export default function TweetEmbed() {
+interface TweetEmbedProps {
+  username?: string;
+}
+
+export default function TweetEmbed({ username = 'arashyt' }: TweetEmbedProps) {
   const [isBlocked, setIsBlocked] = useState(false);
   const [likesState, setLikesState] = useState<{ [key: number]: { count: number; active: boolean } }>({
     1: { count: 142, active: false },
@@ -70,6 +74,13 @@ export default function TweetEmbed() {
     };
   }, []);
 
+  // Reload widgets when username changes dynamically
+  useEffect(() => {
+    if ((window as any).twttr && (window as any).twttr.widgets) {
+      (window as any).twttr.widgets.load();
+    }
+  }, [username]);
+
   const handleLike = (id: number, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -85,7 +96,7 @@ export default function TweetEmbed() {
   };
 
   const handleTweetClick = () => {
-    window.open('https://x.com/arashyt', '_blank', 'noreferrer');
+    window.open(`https://x.com/${username}`, '_blank', 'noreferrer');
   };
 
   if (isBlocked) {
@@ -134,14 +145,14 @@ export default function TweetEmbed() {
                     color: 'white',
                     flexShrink: 0
                   }}>
-                    A
+                    {username.charAt(0).toUpperCase()}
                   </div>
                   {/* Tweet Content */}
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                       <span style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>Arash</span>
                       <span style={{ color: 'var(--accent)', fontSize: '0.9rem' }}>✓</span>
-                      <span style={{ opacity: 0.5, fontSize: '0.85rem' }}>@ArashYT</span>
+                      <span style={{ opacity: 0.5, fontSize: '0.85rem' }}>@{username}</span>
                       <span style={{ opacity: 0.3, fontSize: '0.85rem' }}>•</span>
                       <span style={{ opacity: 0.5, fontSize: '0.85rem' }}>{tweet.date}</span>
                     </div>
@@ -204,9 +215,9 @@ export default function TweetEmbed() {
         className="twitter-timeline" 
         data-theme="dark"
         data-height="500"
-        href="https://twitter.com/arashyt?ref_src=twsrc%5Etfw"
+        href={`https://twitter.com/${username}?ref_src=twsrc%5Etfw`}
       >
-        Tweets by arashyt
+        Tweets by {username}
       </a>
     </div>
   );

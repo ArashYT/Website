@@ -2,10 +2,14 @@
 import React, { useState } from 'react';
 import { useToast } from './Toast';
 
-export default function MinecraftStatus() {
+interface MinecraftStatusProps {
+  serverIp?: string;
+}
+
+export default function MinecraftStatus({ serverIp = 'mc.arashyt.ca' }: MinecraftStatusProps) {
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
-  const serverIP = 'mc.arashyt.ca';
+  const serverIP = serverIp;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(serverIP);

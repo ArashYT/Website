@@ -1,16 +1,25 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 
-export default function LatestVideo() {
+interface LatestVideoProps {
+  channel?: string;
+  showChat?: boolean;
+}
+
+export default function LatestVideo({ channel = 'ArashLIVE', showChat: initialShowChat = true }: LatestVideoProps) {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [isLive, setIsLive] = useState(false);
   const [loading, setLoading] = useState(true);
   const [twitchScriptLoaded, setTwitchScriptLoaded] = useState(false);
   const [hostname, setHostname] = useState('localhost');
-  const [showChat, setShowChat] = useState(true);
+  const [showChat, setShowChat] = useState(initialShowChat);
 
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setShowChat(initialShowChat);
+  }, [initialShowChat]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -98,7 +107,7 @@ export default function LatestVideo() {
     }
 
     const player = new Twitch.Player(containerRef.current, {
-      channel: 'ArashLIVE',
+      channel: channel,
       width: '100%',
       height: '100%',
       autoplay: true,
@@ -129,13 +138,13 @@ export default function LatestVideo() {
         containerRef.current.innerHTML = '';
       }
     };
-  }, [isLive, twitchScriptLoaded, hostname]);
+  }, [isLive, twitchScriptLoaded, hostname, channel]);
 
   const parents = ['localhost', 'arashyt.ca', '8135f22a.arashyt-ca.pages.dev'];
   if (hostname && !parents.includes(hostname)) {
     parents.push(hostname);
   }
-  const chatSrc = `https://www.twitch.tv/embed/ArashLIVE/chat?${parents.map(p => `parent=${p}`).join('&')}&darkpopout`;
+  const chatSrc = `https://www.twitch.tv/embed/${channel}/chat?${parents.map(p => `parent=${p}`).join('&')}&darkpopout`;
 
   return (
     <div className={`latest-video-container ${isLive ? 'is-live' : ''}`}>
