@@ -7,6 +7,7 @@ export default function LatestVideo() {
   const [loading, setLoading] = useState(true);
   const [twitchScriptLoaded, setTwitchScriptLoaded] = useState(false);
   const [hostname, setHostname] = useState('localhost');
+  const [showChat, setShowChat] = useState(true);
 
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -138,21 +139,43 @@ export default function LatestVideo() {
 
   return (
     <div className={`latest-video-container ${isLive ? 'is-live' : ''}`}>
-      <h2>{isLive ? '🔴 Live on Twitch' : 'Latest Video'}</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h2 style={{ margin: 0 }}>{isLive ? '🔴 Live on Twitch' : 'Latest Video'}</h2>
+        {isLive && (
+          <button 
+            onClick={() => setShowChat(!showChat)}
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--card-border)',
+              borderRadius: '8px',
+              padding: '6px 14px',
+              color: 'white',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '0.85rem',
+              transition: 'background 0.2s'
+            }}
+          >
+            {showChat ? '🚫 Hide Chat' : '💬 Show Chat'}
+          </button>
+        )}
+      </div>
       
       {isLive ? (
         <div className="twitch-container">
           <div ref={containerRef} className="video-player glass">
             {!twitchScriptLoaded && <p style={{ padding: '2rem' }}>Loading Twitch Stream...</p>}
           </div>
-          <div className="twitch-chat glass">
-            <iframe
-              id="twitch-chat-embed"
-              src={chatSrc}
-              height="100%"
-              width="100%">
-            </iframe>
-          </div>
+          {showChat && (
+            <div className="twitch-chat glass">
+              <iframe
+                id="twitch-chat-embed"
+                src={chatSrc}
+                height="100%"
+                width="100%">
+              </iframe>
+            </div>
+          )}
         </div>
       ) : (
         <div className="video-player glass" style={{ padding: videoId ? '0' : '2rem', overflow: 'hidden' }}>
