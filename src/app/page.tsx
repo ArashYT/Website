@@ -82,8 +82,8 @@ export default function Home() {
     );
   }
 
-  // Use default fallbacks if database loading fails
-  const activeConfig = config || {
+  // Default fallback values
+  const defaultConfig: SiteConfig = {
     theme: { defaultTheme: 'dark', accentColor: '#ff4655' },
     twitch: { channel: 'ArashLIVE', showChat: true },
     twitter: { username: 'arashyt', enabled: true },
@@ -93,25 +93,46 @@ export default function Home() {
     contactForm: { enabled: false },
     schedule: { enabled: false, days: [] },
     soundboard: { enabled: false },
-    socials: {}
+    socials: {
+      youtube: '',
+      twitch: '',
+      discord: '',
+      tiktok: '',
+      instagram: '',
+      x: ''
+    }
   };
 
-  // Determine if columns contain any active components
-  const showColumn1 = activeConfig.schedule.enabled || activeConfig.twitter.enabled || activeConfig.minecraft.enabled;
-  const showColumn2 = activeConfig.valorant.enabled || activeConfig.soundboard.enabled || activeConfig.randomClip.enabled || true; // SocialLinks always on
+  // Safe merge to prevent crashes on partial objects loaded from the database
+  const activeConfig: SiteConfig = config ? {
+    theme: { ...defaultConfig.theme, ...config.theme },
+    twitch: { ...defaultConfig.twitch, ...config.twitch },
+    twitter: { ...defaultConfig.twitter, ...config.twitter },
+    valorant: { ...defaultConfig.valorant, ...config.valorant },
+    minecraft: { ...defaultConfig.minecraft, ...config.minecraft },
+    randomClip: { ...defaultConfig.randomClip, ...config.randomClip },
+    contactForm: { ...defaultConfig.contactForm, ...config.contactForm },
+    schedule: { ...defaultConfig.schedule, ...config.schedule },
+    soundboard: { ...defaultConfig.soundboard, ...config.soundboard },
+    socials: { ...defaultConfig.socials, ...config.socials }
+  } : defaultConfig;
+
+  // Determine if columns contain any active components using safe accessors
+  const showColumn1 = activeConfig.schedule?.enabled || activeConfig.twitter?.enabled || activeConfig.minecraft?.enabled;
+  const showColumn2 = activeConfig.valorant?.enabled || activeConfig.soundboard?.enabled || activeConfig.randomClip?.enabled || true;
 
   return (
     <div className="home-container">
       {/* Inject custom accent colors dynamically to override CSS roots */}
       <style dangerouslySetInnerHTML={{ __html: `
         :root {
-          --accent: ${activeConfig.theme.accentColor} !important;
-          --accent-glow: ${activeConfig.theme.accentColor}40 !important;
+          --accent: ${activeConfig.theme?.accentColor || '#ff4655'} !important;
+          --accent-glow: ${(activeConfig.theme?.accentColor || '#ff4655')}40 !important;
         }
       `}} />
 
       {/* 1. Twitch Stream Player / Latest Video Section */}
-      <LatestVideo channel={activeConfig.twitch.channel} showChat={activeConfig.twitch.showChat} />
+      <LatestVideo channel={activeConfig.twitch?.channel || 'ArashLIVE'} showChat={!!activeConfig.twitch?.showChat} />
 
       {/* 2. Responsive Dashboard Grid */}
       <div className="home-dashboard-grid" style={{
@@ -121,19 +142,19 @@ export default function Home() {
         {/* Column 1: Schedule, Twitter Timeline, Minecraft Server Status */}
         {showColumn1 && (
           <div className="dashboard-column">
-            {activeConfig.schedule.enabled && <StreamSchedule />}
-            {activeConfig.twitter.enabled && <TweetEmbed username={activeConfig.twitter.username} />}
-            {activeConfig.minecraft.enabled && <MinecraftStatus serverIp={activeConfig.minecraft.serverIp} />}
+            {activeConfig.schedule?.enabled && <StreamSchedule />}
+            {activeConfig.twitter?.enabled && <TweetEmbed username={activeConfig.twitter?.username} />}
+            {activeConfig.minecraft?.enabled && <MinecraftStatus serverIp={activeConfig.minecraft?.serverIp} />}
           </div>
         )}
 
         {/* Column 2: Valorant Career Stats, Livestream Soundboard, Random Clip, Social Profiles */}
         {showColumn2 && (
           <div className="dashboard-column">
-            {activeConfig.valorant.enabled && <ValorantStats />}
-            {activeConfig.soundboard.enabled && <Soundboard />}
-            {activeConfig.randomClip.enabled && <RandomClip />}
-            <SocialLinks links={activeConfig.socials} />
+            {activeConfig.valorant?.enabled && <ValorantStats />}
+            {activeConfig.soundboard?.enabled && <Soundboard />}
+            {activeConfig.randomClip?.enabled && <RandomClip />}
+            <SocialLinks links={activeConfig.socials || {}} />
           </div>
         )}
       </div>
@@ -142,7 +163,7 @@ export default function Home() {
       <TopClips />
 
       {/* 4. Business Inquiries Email form */}
-      {activeConfig.contactForm.enabled && <ContactForm />}
+      {activeConfig.contactForm?.enabled && <ContactForm />}
     </div>
   );
 }
