@@ -58,12 +58,15 @@ async function getLocalLoadout(port, password) {
 
   // Fetch player loadout
   const loadoutRes = await fetch(`https://127.0.0.1:${port}/personalization/v2/players/${puuid}/playerloadout`, { headers });
+  if (loadoutRes.status === 404) {
+    throw new Error('Valorant lobby inactive');
+  }
   if (!loadoutRes.ok) throw new Error('Failed to get player loadout');
   const loadout = await loadoutRes.json();
 
   const activeSkins = {};
-  if (loadout && loadout.Skins) {
-    loadout.Skins.forEach(slot => {
+  if (loadout && loadout.Guns) {
+    loadout.Guns.forEach(slot => {
       const weaponKey = Object.keys(WEAPONS).find(k => WEAPONS[k] === slot.ID);
       if (weaponKey && slot.SkinID) {
         const skinName = skinsMap[slot.SkinID.toLowerCase()] || 'Default Skin';
@@ -144,8 +147,12 @@ async function main() {
         }
       }
     } catch (err) {
-      // Catch exceptions (like connection refused when Valorant is closing) to prevent script crashes
-      console.log('Monitor check skipped (Valorant is likely transitioning or closed).');
+      const errMsg = err.message || String(err);
+      if (errMsg.includes('chat session') || errMsg.includes('player loadout') || errMsg.includes('lobby inactive') || errMsg.includes('ECONNREFUSED')) {
+        console.log('Monitoring: Riot Client launcher is open. Waiting for Valorant game lobby...');
+      } else {
+        console.log('Monitor check failed:', errMsg);
+      }
     }
 
     // Wait 30 seconds before next check
