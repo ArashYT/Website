@@ -26,7 +26,7 @@ export default function ThemeToggle() {
     
     if (themeId === 'dark') {
       document.documentElement.classList.add('dark');
-    } else if (themeId !== 'light') {
+    } else {
       document.documentElement.setAttribute('data-theme', themeId);
     }
   };

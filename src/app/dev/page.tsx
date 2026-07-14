@@ -18,6 +18,13 @@ interface SiteConfig {
     riotId: string;
     apiKey: string;
     enabled: boolean;
+    skins?: {
+      vandal: string;
+      phantom: string;
+      operator: string;
+      melee: string;
+      sheriff: string;
+    };
   };
   minecraft: {
     serverIp: string;
@@ -61,6 +68,16 @@ export default function WebsiteManager() {
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
+          // Initialize default skins if missing
+          if (data.valorant && !data.valorant.skins) {
+            data.valorant.skins = {
+              vandal: "Kuronami Vandal",
+              phantom: "Reaver Phantom",
+              operator: "Elderflame Operator",
+              melee: "Reaver Karambit",
+              sheriff: "Neo Frontier Sheriff"
+            };
+          }
           setConfig(data);
         }
       })
@@ -130,7 +147,9 @@ export default function WebsiteManager() {
     const keys = path.split('.');
     const updated = { ...config } as any;
     
-    if (keys.length === 2) {
+    if (keys.length === 3) {
+      updated[keys[0]][keys[1]][keys[2]] = !updated[keys[0]][keys[1]][keys[2]];
+    } else if (keys.length === 2) {
       updated[keys[0]][keys[1]] = !updated[keys[0]][keys[1]];
     } else if (keys.length === 1) {
       updated[keys[0]] = !updated[keys[0]];
@@ -143,7 +162,12 @@ export default function WebsiteManager() {
     const keys = path.split('.');
     const updated = { ...config } as any;
     
-    if (keys.length === 2) {
+    if (keys.length === 3) {
+      if (!updated[keys[0]][keys[1]]) {
+        updated[keys[0]][keys[1]] = {};
+      }
+      updated[keys[0]][keys[1]][keys[2]] = val;
+    } else if (keys.length === 2) {
       updated[keys[0]][keys[1]] = val;
     } else if (keys.length === 1) {
       updated[keys[0]] = val;
@@ -621,6 +645,106 @@ export default function WebsiteManager() {
                     }}
                   />
                 </div>
+
+                {/* Valorant Skins Loadout Collection Config */}
+                <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
+                  <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: config.theme.accentColor }}>🛡️ Valorant Weapon Loadout Collection</h3>
+                  <p style={{ opacity: 0.6, fontSize: '0.85rem', marginBottom: '1.5rem' }}>Customize the weapon skins displayed in your live Valorant stats card expansion loadout section.</p>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Vandal Skin</label>
+                      <input 
+                        type="text" 
+                        value={config.valorant.skins?.vandal || ''} 
+                        onChange={(e) => handleChange('valorant.skins.vandal', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Phantom Skin</label>
+                      <input 
+                        type="text" 
+                        value={config.valorant.skins?.phantom || ''} 
+                        onChange={(e) => handleChange('valorant.skins.phantom', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Operator Skin</label>
+                      <input 
+                        type="text" 
+                        value={config.valorant.skins?.operator || ''} 
+                        onChange={(e) => handleChange('valorant.skins.operator', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Melee Skin (Knife)</label>
+                      <input 
+                        type="text" 
+                        value={config.valorant.skins?.melee || ''} 
+                        onChange={(e) => handleChange('valorant.skins.melee', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Sheriff Skin</label>
+                      <input 
+                        type="text" 
+                        value={config.valorant.skins?.sheriff || ''} 
+                        onChange={(e) => handleChange('valorant.skins.sheriff', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}

@@ -15,6 +15,25 @@ export async function onRequestGet(context: any) {
     await db.put('valorant_api_key', apiKey);
   }
 
+  // 3. Retrieve customizable weapon loadout skins from KV
+  let skins = await db.get('valorant_skins');
+  let skinsData = null;
+  if (skins) {
+    try {
+      skinsData = JSON.parse(skins);
+    } catch(e) {}
+  }
+  if (!skinsData) {
+    skinsData = {
+      vandal: "Kuronami Vandal",
+      phantom: "Reaver Phantom",
+      operator: "Elderflame Operator",
+      melee: "Reaver Karambit",
+      sheriff: "Neo Frontier Sheriff"
+    };
+    await db.put('valorant_skins', JSON.stringify(skinsData));
+  }
+
   const parts = riotId.split('#');
   const name = parts[0] || 'TTV ArashLIVE';
   const tag = parts[1] || 'LWPxD';
@@ -77,14 +96,14 @@ export async function onRequestGet(context: any) {
             'Deadlock': '🕸️', 'Iso': '🛡️', 'Clove': '🦋', 'Vyse': '🌹'
           };
           const agentEmoji = agentEmojis[player.character] || '👤';
-
+ 
           // Calculate headshot accuracy
           const hs = player.stats?.headshots ?? 0;
           const bs = player.stats?.bodyshots ?? 0;
           const ls = player.stats?.legshots ?? 0;
           const totalHits = hs + bs + ls;
           const hsPercent = totalHits > 0 ? Math.round((hs / totalHits) * 100) : 0;
-
+ 
           // Format clean date string (e.g. "Tuesday, July 14")
           let dateStr = 'Recently';
           if (m.metadata?.game_start_patched) {
@@ -93,7 +112,7 @@ export async function onRequestGet(context: any) {
               dateStr = dateParts[0] + ',' + dateParts[1];
             }
           }
-
+ 
           return {
             map: m.metadata?.map || 'Lotus',
             mode: m.metadata?.mode || 'Competitive',
@@ -111,7 +130,7 @@ export async function onRequestGet(context: any) {
         }).filter(Boolean);
       }
     }
-
+ 
     if (mmrData.current_data) {
       return new Response(JSON.stringify({
         success: true,
@@ -125,7 +144,8 @@ export async function onRequestGet(context: any) {
         rankIcon: mmrData.current_data.images?.small || null,
         region: region.toUpperCase() + " East",
         isActive: true,
-        matches: matchesData
+        matches: matchesData,
+        skins: skinsData
       }), {
         headers: { 
           'Content-Type': 'application/json',
@@ -146,7 +166,8 @@ export async function onRequestGet(context: any) {
         rankIcon: null,
         region: "NA East",
         isActive: false,
-        matches: []
+        matches: [],
+        skins: skinsData
       }), {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -165,7 +186,8 @@ export async function onRequestGet(context: any) {
       rankIcon: null,
       region: "NA East",
       isActive: false,
-      matches: []
+      matches: [],
+      skins: skinsData
     }), {
       headers: { 'Content-Type': 'application/json' }
     });

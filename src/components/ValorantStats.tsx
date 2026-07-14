@@ -29,12 +29,14 @@ interface ValStats {
   region: string;
   isActive: boolean;
   matches: MatchDetail[];
+  skins: Record<string, string>;
 }
 
 export default function ValorantStats() {
   const [stats, setStats] = useState<ValStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [skinsImages, setSkinsImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetch('/api/valorant')
@@ -42,11 +44,34 @@ export default function ValorantStats() {
       .then(data => {
         setStats(data);
         setLoading(false);
+        if (data.skins) {
+          fetchSkinsImages(data.skins);
+        }
       })
       .catch(() => {
         setLoading(false);
       });
   }, []);
+
+  const fetchSkinsImages = (skinsObj: Record<string, string>) => {
+    fetch('https://valorant-api.com/v1/weapons/skins')
+      .then(res => res.json())
+      .then(resData => {
+        if (resData && resData.data) {
+          const matched: Record<string, string> = {};
+          Object.entries(skinsObj).forEach(([weaponKey, skinName]) => {
+            const found = resData.data.find((skin: any) => 
+              skin.displayName.toLowerCase().includes(skinName.toLowerCase())
+            );
+            if (found) {
+              matched[weaponKey] = found.displayIcon;
+            }
+          });
+          setSkinsImages(matched);
+        }
+      })
+      .catch(() => {});
+  };
 
   if (loading) {
     return (
@@ -68,7 +93,14 @@ export default function ValorantStats() {
     rankIcon: null,
     region: 'NA East',
     isActive: false,
-    matches: [] as MatchDetail[]
+    matches: [] as MatchDetail[],
+    skins: {
+      vandal: "Kuronami Vandal",
+      phantom: "Reaver Phantom",
+      operator: "Elderflame Operator",
+      melee: "Reaver Karambit",
+      sheriff: "Neo Frontier Sheriff"
+    }
   };
 
   const percentage = currentStats.rankRating;
@@ -207,6 +239,72 @@ export default function ValorantStats() {
                   alt="Valorant Player Card" 
                   style={{ width: '100%', height: 'auto', display: 'block' }}
                 />
+              </div>
+            )}
+
+            {/* Weapon Loadout Showcase */}
+            {currentStats.skins && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  🎖️ Active Loadout
+                </div>
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    gap: '8px',
+                    overflowX: 'auto',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    border: '1px solid var(--card-border)',
+                    borderRadius: '12px',
+                    padding: '8px'
+                  }}
+                >
+                  {Object.entries(currentStats.skins).map(([weapon, skinName]) => {
+                    const iconUrl = skinsImages[weapon];
+                    return (
+                      <div 
+                        key={weapon} 
+                        style={{ 
+                          flex: '0 0 95px',
+                          display: 'flex', 
+                          flexDirection: 'column', 
+                          alignItems: 'center', 
+                          background: 'rgba(255,255,255,0.02)',
+                          border: '1px solid var(--card-border)',
+                          borderRadius: '8px',
+                          padding: '6px',
+                          textAlign: 'center',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <span style={{ fontSize: '0.65rem', opacity: 0.5, textTransform: 'capitalize', fontWeight: 'bold' }}>
+                          {weapon}
+                        </span>
+                        <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '4px 0', width: '100%' }}>
+                          {iconUrl ? (
+                            <img src={iconUrl} alt={String(skinName)} style={{ maxHeight: '35px', maxWidth: '100%', objectFit: 'contain' }} />
+                          ) : (
+                            <span style={{ fontSize: '1.2rem' }}>🔫</span>
+                          )}
+                        </div>
+                        <span 
+                          style={{ 
+                            fontSize: '0.7rem', 
+                            fontWeight: 'bold', 
+                            whiteSpace: 'nowrap', 
+                            overflow: 'hidden', 
+                            textTransform: 'capitalize',
+                            textOverflow: 'ellipsis', 
+                            width: '100%' 
+                          }} 
+                          title={String(skinName)}
+                        >
+                          {String(skinName)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 

@@ -28,10 +28,12 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{__html: `
           (function() {
             try {
-              var theme = localStorage.getItem('theme');
-              if (theme === 'light') {
+              var theme = localStorage.getItem('theme') || 'dark';
+              if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.removeAttribute('data-theme');
+              } else {
                 document.documentElement.classList.remove('dark');
-              } else if (theme && theme !== 'dark') {
                 document.documentElement.setAttribute('data-theme', theme);
               }
             } catch (e) {}
