@@ -71,89 +71,89 @@ export default function GearPageClient() {
       <div 
         style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
           gap: '1.25rem',
           minHeight: '300px'
         }}
       >
         {filteredItems.map((item, i) => (
-          <div 
+          <a 
             key={i} 
-            className="glass reveal" 
+            href={`https://www.google.com/search?q=${encodeURIComponent(item.search)}`} 
+            target="_blank" 
+            rel="noreferrer"
+            className="glass reveal gear-card" 
             style={{ 
-              padding: '1.5rem', 
+              padding: '1rem', 
               borderRadius: '16px', 
               display: 'flex', 
               flexDirection: 'column', 
-              justifyContent: 'space-between',
+              textDecoration: 'none',
+              color: 'white',
+              position: 'relative',
               animation: 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both',
               animationDelay: `${i * 0.03}s`
             }}
           >
-            <div>
-              {/* Product Image Frame */}
-              {item.image && (
-                <div style={{
-                  height: '140px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '1rem',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  background: 'rgba(0, 0, 0, 0.1)',
-                  border: '1px solid var(--card-border)'
-                }}>
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    style={{
-                      maxHeight: '120px',
-                      maxWidth: '90%',
-                      objectFit: 'contain',
-                      mixBlendMode: 'screen',
-                      filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))'
-                    }} 
-                  />
-                </div>
-              )}
-
-              <p style={{ 
-                fontSize: '0.8rem', 
-                color: item.category === 'pc' ? '#1e90ff' : 'var(--accent)', 
-                fontWeight: 'bold', 
-                textTransform: 'uppercase', 
-                letterSpacing: '1px',
-                marginBottom: '0.5rem' 
+            {/* Product Image Frame */}
+            {item.image && (
+              <div style={{
+                height: '150px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '0.75rem',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                background: 'rgba(0, 0, 0, 0.12)',
+                border: '1px solid var(--card-border)'
               }}>
-                {item.category === 'pc' ? '🖥️ Component' : '🎧 Peripheral'}
-              </p>
-              <span style={{ fontSize: '0.85rem', opacity: 0.5, fontWeight: 'bold' }}>{item.name}</span>
-              <h3 style={{ fontSize: '1.2rem', margin: '0.25rem 0 1.25rem 0', fontWeight: 'bold' }}>{item.value}</h3>
-            </div>
-            
-            <a 
-              href={`https://www.google.com/search?q=${encodeURIComponent(item.search)}`} 
-              target="_blank" 
-              rel="noreferrer"
-              style={{ 
-                display: 'inline-block', 
-                padding: '0.6rem 1rem', 
-                background: 'rgba(255, 255, 255, 0.02)', 
-                borderRadius: '8px', 
-                textAlign: 'center', 
-                textDecoration: 'none', 
-                color: 'white', 
-                fontSize: '0.85rem', 
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  style={{
+                    maxHeight: '135px',
+                    maxWidth: '90%',
+                    objectFit: 'contain',
+                    mixBlendMode: 'screen',
+                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))',
+                    transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }} 
+                  className="gear-img"
+                />
+              </div>
+            )}
+
+            {/* Product Details */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ 
+                  fontSize: '0.7rem', 
+                  color: item.category === 'pc' ? '#1e90ff' : 'var(--accent)', 
+                  fontWeight: 'bold', 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '1px'
+                }}>
+                  {item.category === 'pc' ? '🖥️ Component' : '🎧 Peripheral'}
+                </span>
+                <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>🔍</span>
+              </div>
+              
+              <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', marginTop: '4px' }}>
+                {item.name}
+              </span>
+              
+              <h3 style={{ 
+                fontSize: '1rem', 
+                margin: '2px 0 0 0', 
                 fontWeight: 'bold',
-                border: '1px solid var(--card-border)',
-                transition: 'all 0.2s'
-              }}
-              className="gear-lookup-btn"
-            >
-              🔍 Look Up Product
-            </a>
-          </div>
+                lineHeight: '1.3',
+                flex: 1
+              }}>
+                {item.value}
+              </h3>
+            </div>
+          </a>
         ))}
       </div>
     </div>

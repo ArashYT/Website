@@ -388,3 +388,19 @@ button, .watch-btn, .social-card {
 button:active, .watch-btn:active, .social-card:active {
   transform: scale(0.96);
 }
+
+/* Gear Page Hover Animations */
+.gear-card {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.gear-card:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 15px var(--accent-glow) !important;
+}
+
+.gear-card:hover .gear-img {
+  transform: scale(1.08);
+}
