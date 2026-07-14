@@ -158,6 +158,7 @@ export async function onRequestGet(context: any) {
       riotId,
       accountLevel: 751,
       cardIcon: null,
+      cardIconWide: null,
       rankName: "Silver 2",
       rankRating: 0,
       elo: 700,
