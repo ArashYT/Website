@@ -101,7 +101,7 @@ export default function GearPageClient() {
                   marginBottom: '1rem',
                   borderRadius: '12px',
                   overflow: 'hidden',
-                  background: 'rgba(0, 0, 0, 0.25)',
+                  background: 'rgba(0, 0, 0, 0.1)',
                   border: '1px solid var(--card-border)'
                 }}>
                   <img 
@@ -111,6 +111,7 @@ export default function GearPageClient() {
                       maxHeight: '120px',
                       maxWidth: '90%',
                       objectFit: 'contain',
+                      mixBlendMode: 'screen',
                       filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))'
                     }} 
                   />
