@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 
 import ThemeToggle from "@/components/ThemeToggle";
 import KonamiCode from "@/components/KonamiCode";
-import LiveIndicator from "@/components/LiveIndicator";
 
 export default function RootLayout({
   children,
@@ -38,8 +37,7 @@ export default function RootLayout({
         `}} />
         <KonamiCode />
         <div className="layout-wrapper">
-          <LiveIndicator />
-          <header className="glass" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <header className="glass" style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
             <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--accent)', fontWeight: '900', letterSpacing: '-0.5px' }}>Arash</h1>
             <nav style={{ display: 'flex', gap: '1.2rem', fontWeight: 600, flexWrap: 'wrap', justifyContent: 'center' }}>
               <a href="/" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Home</a>
