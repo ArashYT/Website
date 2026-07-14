@@ -11,7 +11,7 @@ export default function TweetEmbed() {
   }, []);
 
   return (
-    <div className="glass" style={{ padding: '2rem', borderRadius: '16px', height: '600px', overflowY: 'auto' }}>
+    <div className="tweet-embed-container glass" style={{ padding: '2rem', borderRadius: '16px', height: '600px', overflowY: 'auto' }}>
       <h2>🐦 Latest Tweets</h2>
       <a 
         className="twitter-timeline" 

@@ -245,3 +245,75 @@ footer {
   margin-bottom: 1rem;
 }
 
+/* Twitch Live View Grid Layout (Desktop) */
+@media (min-width: 769px) {
+  .latest-video-container.is-live {
+    grid-column: 1 / -1;
+  }
+
+  .latest-video-container.is-live ~ .random-clip-container {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .latest-video-container.is-live ~ .tweet-embed-container {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+    height: 100% !important;
+  }
+
+  .latest-video-container.is-live ~ .social-links-container {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
+
+/* Twitch Container Layout */
+.twitch-container {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: stretch;
+}
+
+.twitch-container .video-player {
+  flex: 1;
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  cursor: default;
+}
+
+.twitch-container .video-player:hover {
+  transform: none;
+}
+
+.twitch-chat {
+  width: 340px;
+  flex-shrink: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.twitch-chat iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 1024px) {
+  .twitch-container {
+    flex-direction: column;
+  }
+  
+  .twitch-chat {
+    width: 100%;
+    height: 450px;
+  }
+}
+

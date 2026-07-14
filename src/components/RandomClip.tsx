@@ -15,7 +15,7 @@ export default function RandomClip() {
   };
 
   return (
-    <div className="glass" style={{ padding: '2rem', textAlign: 'center', borderRadius: '16px' }}>
+    <div className="random-clip-container glass" style={{ padding: '2rem', textAlign: 'center', borderRadius: '16px' }}>
       <h2>🎲 Random Clip Generator</h2>
       <p style={{ opacity: 0.8, marginBottom: '1.5rem' }}>Bored? Click below to watch a random hilarious moment from the stream!</p>
       <button 

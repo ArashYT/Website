@@ -1,10 +1,21 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 export default function LatestVideo() {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [isLive, setIsLive] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [twitchScriptLoaded, setTwitchScriptLoaded] = useState(false);
+  const [hostname, setHostname] = useState('localhost');
+
+  const playerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHostname(window.location.hostname);
+    }
+  }, []);
 
   useEffect(() => {
     // Check if live on Twitch first
@@ -30,29 +41,116 @@ export default function LatestVideo() {
       .catch(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (!isLive) return;
+
+    const checkTwitch = () => {
+      if ((window as any).Twitch) {
+        setTwitchScriptLoaded(true);
+        return true;
+      }
+      return false;
+    };
+
+    if (checkTwitch()) return;
+
+    // Check if script is already in document
+    let script = document.querySelector('script[src="https://embed.twitch.tv/embed/v1.js"]') as HTMLScriptElement;
+    if (!script) {
+      script = document.createElement('script');
+      script.src = 'https://embed.twitch.tv/embed/v1.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    const handleLoad = () => {
+      setTwitchScriptLoaded(true);
+    };
+
+    script.addEventListener('load', handleLoad);
+    
+    const interval = setInterval(() => {
+      if (checkTwitch()) {
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => {
+      script.removeEventListener('load', handleLoad);
+      clearInterval(interval);
+    };
+  }, [isLive]);
+
+  useEffect(() => {
+    if (!isLive || !twitchScriptLoaded || !containerRef.current) return;
+
+    if (playerRef.current) return;
+
+    const Twitch = (window as any).Twitch;
+    if (!Twitch || !Twitch.Player) return;
+
+    containerRef.current.innerHTML = '';
+
+    const parents = ['localhost', 'arashyt.ca', '8135f22a.arashyt-ca.pages.dev'];
+    if (hostname && !parents.includes(hostname)) {
+      parents.push(hostname);
+    }
+
+    const player = new Twitch.Player(containerRef.current, {
+      channel: 'ArashLIVE',
+      width: '100%',
+      height: '100%',
+      autoplay: true,
+      muted: false,
+      parent: parents,
+    });
+
+    playerRef.current = player;
+
+    player.addEventListener(Twitch.Player.READY, () => {
+      try {
+        const qualities = player.getQualities();
+        if (qualities && qualities.includes('chunked')) {
+          player.setQuality('chunked');
+        } else if (qualities && qualities.length > 0) {
+          player.setQuality(qualities[0]);
+        }
+      } catch (err) {
+        console.error('Failed to set Twitch video quality:', err);
+      }
+    });
+
+    return () => {
+      if (playerRef.current) {
+        playerRef.current = null;
+      }
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
+    };
+  }, [isLive, twitchScriptLoaded, hostname]);
+
+  const parents = ['localhost', 'arashyt.ca', '8135f22a.arashyt-ca.pages.dev'];
+  if (hostname && !parents.includes(hostname)) {
+    parents.push(hostname);
+  }
+  const chatSrc = `https://www.twitch.tv/embed/ArashLIVE/chat?${parents.map(p => `parent=${p}`).join('&')}&darkpopout`;
+
   return (
-    <div className="latest-video-container">
+    <div className={`latest-video-container ${isLive ? 'is-live' : ''}`}>
       <h2>{isLive ? '🔴 Live on Twitch' : 'Latest Video'}</h2>
       
       {isLive ? (
-        <div className="twitch-container" style={{ display: 'flex', gap: '1rem', minHeight: '500px', position: 'relative' }}>
-          <div className="video-player glass" style={{ width: '100%', padding: '0', overflow: 'hidden', minHeight: '500px' }}>
-            <iframe
-              src="https://player.twitch.tv/?channel=ArashLIVE&parent=arashyt.ca&parent=localhost&parent=8135f22a.arashyt-ca.pages.dev"
-              frameBorder="0"
-              allowFullScreen={true}
-              scrolling="no"
-              height="100%"
-              width="100%">
-            </iframe>
+        <div className="twitch-container">
+          <div ref={containerRef} className="video-player glass">
+            {!twitchScriptLoaded && <p style={{ padding: '2rem' }}>Loading Twitch Stream...</p>}
           </div>
-          <div className="twitch-chat glass" style={{ position: 'absolute', top: '10px', right: '10px', bottom: '10px', width: '350px', padding: '0', overflow: 'hidden', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', border: '1px solid var(--accent)', borderRadius: '12px' }}>
+          <div className="twitch-chat glass">
             <iframe
               id="twitch-chat-embed"
-              src="https://www.twitch.tv/embed/ArashLIVE/chat?parent=arashyt.ca&parent=localhost&parent=8135f22a.arashyt-ca.pages.dev&darkpopout"
+              src={chatSrc}
               height="100%"
-              width="100%"
-              style={{ opacity: 0.9 }}>
+              width="100%">
             </iframe>
           </div>
         </div>
