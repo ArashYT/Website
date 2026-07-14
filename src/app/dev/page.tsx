@@ -30,6 +30,11 @@ interface SiteConfig {
     serverIp: string;
     enabled: boolean;
   };
+  adsense: {
+    enabled: boolean;
+    publisherId: string;
+    adSlotId: string;
+  };
   randomClip: {
     enabled: boolean;
   };
@@ -58,7 +63,7 @@ export default function WebsiteManager() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authError, setAuthError] = useState('');
-  const [activeTab, setActiveTab] = useState<'widgets' | 'integrations' | 'branding' | 'socials' | 'security'>('widgets');
+  const [activeTab, setActiveTab] = useState<'widgets' | 'integrations' | 'branding' | 'socials' | 'security' | 'monetization'>('widgets');
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -76,6 +81,14 @@ export default function WebsiteManager() {
               operator: "Elderflame Operator",
               melee: "Reaver Karambit",
               sheriff: "Neo Frontier Sheriff"
+            };
+          }
+          // Initialize default adsense if missing
+          if (!data.adsense) {
+            data.adsense = {
+              enabled: false,
+              publisherId: '',
+              adSlotId: ''
             };
           }
           setConfig(data);
@@ -378,6 +391,22 @@ export default function WebsiteManager() {
             }}
           >
             🔗 Social Links
+          </button>
+          <button 
+            onClick={() => setActiveTab('monetization')}
+            style={{
+              padding: '0.8rem 1rem',
+              borderRadius: '8px',
+              border: 'none',
+              background: activeTab === 'monetization' ? 'rgba(255,255,255,0.08)' : 'transparent',
+              color: activeTab === 'monetization' ? config.theme.accentColor : '#fff',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textAlign: 'left',
+              outline: 'none'
+            }}
+          >
+            💵 Monetization & Ads
           </button>
           <button 
             onClick={() => setActiveTab('security')}
@@ -965,6 +994,102 @@ export default function WebsiteManager() {
                   <span style={{ fontSize: '0.75rem', opacity: 0.4, marginTop: '4px', display: 'block' }}>
                     Type the new code and click outside the input (blur) to trigger the change.
                   </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 6: Monetization Config */}
+          {activeTab === 'monetization' && (
+            <div>
+              <h2 style={{ marginTop: 0, marginBottom: '1.5rem', color: config.theme.accentColor }}>💵 Monetization & Display Ads</h2>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--card-border)', borderRadius: '12px', padding: '1.2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h3 style={{ margin: '0 0 4px 0', fontSize: '1.1rem', color: '#fff' }}>Enable Google AdSense</h3>
+                    <p style={{ margin: 0, opacity: 0.6, fontSize: '0.85rem' }}>Inject dynamic Google AdSense ads on your main portfolio index page.</p>
+                  </div>
+                  <button
+                    onClick={() => handleToggle('adsense.enabled')}
+                    style={{
+                      background: config.adsense?.enabled ? config.theme.accentColor : 'rgba(255,255,255,0.05)',
+                      border: '1px solid var(--card-border)',
+                      borderRadius: '24px',
+                      padding: '0.5rem 1.5rem',
+                      fontWeight: 'bold',
+                      color: config.adsense?.enabled ? '#000' : '#fff',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {config.adsense?.enabled ? 'ACTIVE 🟢' : 'DISABLED 🔴'}
+                  </button>
+                </div>
+
+                {config.adsense?.enabled && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', background: 'rgba(0,0,0,0.15)', border: '1px solid var(--card-border)', borderRadius: '12px', padding: '1.5rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.5rem', fontWeight: 'bold' }}>
+                        Google AdSense Publisher ID (client ID)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. ca-pub-xxxxxxxxxxxxxxxx"
+                        value={config.adsense?.publisherId || ''} 
+                        onChange={(e) => handleChange('adsense.publisherId', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }}
+                      />
+                      <span style={{ fontSize: '0.75rem', opacity: 0.4, marginTop: '4px', display: 'block' }}>
+                        Matches format: `ca-pub-[16 digit number]`
+                      </span>
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.9rem', opacity: 0.7, marginBottom: '0.5rem', fontWeight: 'bold' }}>
+                        Google AdSense Ad Slot ID
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. xxxxxxxxxx"
+                        value={config.adsense?.adSlotId || ''} 
+                        onChange={(e) => handleChange('adsense.adSlotId', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }}
+                      />
+                      <span style={{ fontSize: '0.75rem', opacity: 0.4, marginTop: '4px', display: 'block' }}>
+                        The 10-digit ID of your display ad unit (e.g. `1234567890`)
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '1.2rem', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                  <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: config.theme.accentColor }}>💡 How to monetize your website with Google AdSense:</h4>
+                  <ol style={{ paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <li>Go to the <a href="https://adsense.google.com" target="_blank" rel="noopener noreferrer" style={{ color: config.theme.accentColor, fontWeight: 'bold', textDecoration: 'none' }}>Google AdSense Portal</a> and sign up using your Google account.</li>
+                    <li>Add your website URL: <strong>arashyt.ca</strong>.</li>
+                    <li>Retrieve your AdSense **Publisher ID** (client) and paste it above, turn the toggle to **Active**, and click **Save Config** at the top right.</li>
+                    <li>In AdSense, click **Verify / Let Google check your site**. Google will detect the verification tag instantly because it is loaded dynamically on your live pages.</li>
+                    <li>Once approved, create a **Display Ad Unit** in AdSense, get the **Slot ID**, paste it here, and your ads will start rendering!</li>
+                  </ol>
                 </div>
               </div>
             </div>

@@ -10,6 +10,7 @@ import RandomClip from "@/components/RandomClip";
 import StreamSchedule from "@/components/StreamSchedule";
 import Soundboard from "@/components/Soundboard";
 import ContactForm from "@/components/ContactForm";
+import AdUnit from "@/components/AdUnit";
 
 interface SiteConfig {
   theme: {
@@ -54,6 +55,11 @@ interface SiteConfig {
     instagram: string;
     x: string;
   };
+  adsense: {
+    enabled: boolean;
+    publisherId: string;
+    adSlotId: string;
+  };
 }
 
 export default function Home() {
@@ -74,6 +80,20 @@ export default function Home() {
       });
   }, []);
 
+  // Dynamically inject Google AdSense script when enabled
+  useEffect(() => {
+    if (config?.adsense?.enabled && config?.adsense?.publisherId) {
+      const existingScript = document.querySelector('script[src*="adsbygoogle.js"]');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${config.adsense.publisherId}`;
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
+      }
+    }
+  }, [config]);
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', color: '#fff' }}>
@@ -89,6 +109,7 @@ export default function Home() {
     twitter: { username: 'arashyt', enabled: true },
     valorant: { riotId: 'TTV ArashLIVE#LWPxD', apiKey: '', enabled: true },
     minecraft: { serverIp: 'mc.arashyt.ca', enabled: false },
+    adsense: { enabled: false, publisherId: '', adSlotId: '' },
     randomClip: { enabled: false },
     contactForm: { enabled: false },
     schedule: { enabled: false, days: [] },
@@ -110,6 +131,11 @@ export default function Home() {
     twitter: { ...defaultConfig.twitter, ...config.twitter },
     valorant: { ...defaultConfig.valorant, ...config.valorant },
     minecraft: { ...defaultConfig.minecraft, ...config.minecraft },
+    adsense: {
+      enabled: config.adsense?.enabled ?? defaultConfig.adsense.enabled,
+      publisherId: config.adsense?.publisherId ?? defaultConfig.adsense.publisherId,
+      adSlotId: config.adsense?.adSlotId ?? defaultConfig.adsense.adSlotId
+    },
     randomClip: { ...defaultConfig.randomClip, ...config.randomClip },
     contactForm: { ...defaultConfig.contactForm, ...config.contactForm },
     schedule: { ...defaultConfig.schedule, ...config.schedule },
@@ -158,6 +184,11 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* AdSense Unit Placement */}
+      {activeConfig.adsense?.enabled && activeConfig.adsense?.publisherId && activeConfig.adsense?.adSlotId && (
+        <AdUnit publisherId={activeConfig.adsense.publisherId} adSlotId={activeConfig.adsense.adSlotId} />
+      )}
 
       {/* 3. Stream Highlights Clips */}
       <TopClips />

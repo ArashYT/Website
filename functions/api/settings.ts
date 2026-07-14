@@ -31,6 +31,11 @@ export async function onRequestGet(context: any) {
           serverIp: 'mc.arashyt.ca',
           enabled: false
         },
+        adsense: {
+          enabled: false,
+          publisherId: '',
+          adSlotId: ''
+        },
         randomClip: {
           enabled: false
         },

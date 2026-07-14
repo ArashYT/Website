@@ -22,6 +22,10 @@ const faqData: FAQItem[] = [
   {
     question: "🖥️ Where can I see your PC specs?",
     answer: "You can click on the 'Gear' tab in the top navigation menu to see a complete, categorised list of my gaming PC specs and peripherals!"
+  },
+  {
+    question: "🔒 Website Privacy Policy & Ad Disclosures",
+    answer: "This website integrates third-party services and ad networks (such as Google AdSense) to display ads. These partners may collect and use cookies, browser user-agents, and web beacons to serve personalized advertisements based on your visits to this and other websites. You can manage your ad personalization preferences through your Google account settings."
   }
 ];
 
@@ -82,7 +86,7 @@ export default function FAQAccordion() {
               {/* Answer Content */}
               <div
                 style={{
-                  maxHeight: isOpen ? '120px' : '0px',
+                  maxHeight: isOpen ? '250px' : '0px',
                   overflow: 'hidden',
                   transition: 'max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s',
                   opacity: isOpen ? 1 : 0
