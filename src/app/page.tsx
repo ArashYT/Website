@@ -8,11 +8,6 @@ import TweetEmbed from "@/components/TweetEmbed";
 export default function Home() {
   return (
     <div className="home-container">
-      <section className="hero-section">
-        <h2>Welcome to the Channel</h2>
-        <p>Your hub for the latest streams, videos, and social updates.</p>
-      </section>
-
       <div className="content-grid">
         <LatestVideo />
         <RandomClip />
