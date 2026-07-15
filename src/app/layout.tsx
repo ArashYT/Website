@@ -24,6 +24,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5834685209690870" 
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className={`${inter.variable}`}>
         <script dangerouslySetInnerHTML={{__html: `
           (function() {
