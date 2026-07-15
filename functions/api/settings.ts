@@ -111,7 +111,7 @@ export async function onRequestPost(context: any) {
       });
     }
 
-    if (!settings) {
+    if (!settings || Object.keys(settings).length === 0) {
       return new Response(JSON.stringify({ success: false, error: "Settings payload missing." }), { 
         status: 400,
         headers: { 'Content-Type': 'application/json' }

@@ -110,7 +110,7 @@ export default function WebsiteManager() {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ settings: {}, password: pass })
+        body: JSON.stringify({ password: pass })
       });
       // 401 is unauthorized, 400 is payload missing (which means auth succeeded because payload was checked after auth!)
       if (res.status === 400 || res.status === 200 || res.status === 404) {
