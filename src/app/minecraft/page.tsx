@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import MinecraftStatus from "@/components/MinecraftStatus";
+import Skin3DViewer from "@/components/Skin3DViewer";
 
 const MINECRAFT_ACCOUNTS = ['Arash_YT', 'TTVArashLIVE', 'Arash132', 'MrWaiterMan'];
 
@@ -140,27 +141,15 @@ export default function MinecraftPage() {
               {/* 3D Skin Render Box */}
               <div style={{
                 background: 'rgba(0,0,0,0.3)',
-                padding: '2rem 1rem',
+                padding: '1rem',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderBottom: '1px solid var(--card-border)',
-                minHeight: '220px',
+                minHeight: '290px',
                 position: 'relative'
               }}>
-                <img 
-                  src={`https://crafatar.com/renders/body/${profile.uuid}?overlay=true`}
-                  alt={`${username} Skin Render`}
-                  style={{
-                    height: '180px',
-                    objectFit: 'contain',
-                    filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.5))'
-                  }}
-                  onError={(e) => {
-                    // Fallback to Steve/Alex flat render if Crafatar fails
-                    (e.target as HTMLImageElement).src = `https://minotar.net/armor/body/${username}/180.png`;
-                  }}
-                />
+                <Skin3DViewer skinUrl={`https://crafatar.com/skins/${profile.uuid}`} />
               </div>
 
               {/* Profile details */}

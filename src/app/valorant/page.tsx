@@ -16,6 +16,22 @@ interface MatchDetail {
   date: string;
 }
 
+interface MmrHistoryItem {
+  matchId: string;
+  map: string;
+  rankName: string;
+  rrChange: number;
+  rrAfter: number;
+  date: string;
+  elo: number;
+}
+
+interface HighestRank {
+  tier: number;
+  patched_tier: string;
+  season: string;
+}
+
 interface ValStats {
   success: boolean;
   riotId: string;
@@ -30,12 +46,15 @@ interface ValStats {
   isActive: boolean;
   matches: MatchDetail[];
   skins: Record<string, string>;
+  highestRank?: HighestRank | null;
+  mmrHistory?: MmrHistoryItem[];
 }
 
 export default function ValorantPage() {
   const [stats, setStats] = useState<ValStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [skinsImages, setSkinsImages] = useState<Record<string, string>>({});
+  const [selectedWeapon, setSelectedWeapon] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/valorant')
@@ -100,7 +119,9 @@ export default function ValorantPage() {
       operator: "Elderflame Operator",
       melee: "Reaver Karambit",
       sheriff: "Neo Frontier Sheriff"
-    }
+    },
+    highestRank: { tier: 15, patched_tier: 'Platinum 1', season: 'e9a3' },
+    mmrHistory: []
   };
 
   // Performance calculations
@@ -119,49 +140,72 @@ export default function ValorantPage() {
   const avgACS = totalMatches > 0 ? Math.round(currentStats.matches.reduce((acc, m) => acc + m.score, 0) / totalMatches) : 0;
   const avgHS = totalMatches > 0 ? Math.round(currentStats.matches.reduce((acc, m) => acc + m.hsPercent, 0) / totalMatches) : 0;
 
+  // Dynamic role playrate calculations
+  const roleDistribution = { Duelist: 0, Initiator: 0, Sentinel: 0, Controller: 0 };
+  const duelistAgents = ['Jett', 'Reyna', 'Raze', 'Phoenix', 'Neon', 'Yoru', 'Iso'];
+  const initiatorAgents = ['Sova', 'Fade', 'Breach', 'Skye', 'Gekko', 'KAY/O'];
+  const controllerAgents = ['Omen', 'Brimstone', 'Viper', 'Astra', 'Harbor', 'Clove'];
+  const sentinelAgents = ['Sage', 'Cypher', 'Killjoy', 'Chamber', 'Deadlock', 'Vyse'];
+
+  currentStats.matches.forEach(m => {
+    if (duelistAgents.includes(m.agent)) roleDistribution.Duelist++;
+    else if (initiatorAgents.includes(m.agent)) roleDistribution.Initiator++;
+    else if (controllerAgents.includes(m.agent)) roleDistribution.Controller++;
+    else if (sentinelAgents.includes(m.agent)) roleDistribution.Sentinel++;
+  });
+
+  const displayRegion = currentStats.region.toLowerCase().includes('east') ? 'NA EAST' : currentStats.region.toUpperCase();
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem', minHeight: '80vh' }}>
       
-      {/* 1. Player Card Banner Header */}
+      {/* 1. Player Card Banner Header (Unified Background Layout) */}
       <div 
         className="glass reveal" 
         style={{ 
           borderRadius: '24px', 
           overflow: 'hidden', 
           border: '1px solid var(--card-border)',
-          background: 'rgba(255, 255, 255, 0.02)',
+          background: currentStats.cardIconWide ? `url(${currentStats.cardIconWide}) center/cover no-repeat` : 'linear-gradient(135deg, #1f1f23, #ff465530)',
           marginBottom: '2.5rem',
-          position: 'relative'
+          position: 'relative',
+          minHeight: '260px',
+          display: 'flex',
+          alignItems: 'flex-end'
         }}
       >
-        {/* Banner Wallpaper */}
-        <div style={{ 
-          height: '180px', 
-          background: currentStats.cardIconWide ? `url(${currentStats.cardIconWide}) center/cover no-repeat` : 'linear-gradient(135deg, #1f1f23, #ff465530)',
-          borderBottom: '1px solid var(--card-border)',
-          opacity: 0.8
+        {/* Dark gradient overlay covering the card to blend banner and protect text readability */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(to top, rgba(10, 10, 12, 0.95) 30%, rgba(10, 10, 12, 0.3) 100%)',
+          zIndex: 0
         }} />
 
-        {/* Profile Details Container */}
+        {/* Profile Details Overlay */}
         <div style={{ 
-          padding: '2rem',
+          padding: '2.5rem 2rem',
           display: 'flex',
           alignItems: 'center',
           gap: '1.5rem',
-          marginTop: '-80px',
           position: 'relative',
           zIndex: 1,
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          width: '100%'
         }}>
-          {/* Avatar Card */}
+          {/* Avatar Icon */}
           <div style={{
-            width: '120px',
-            height: '120px',
+            width: '110px',
+            height: '110px',
             borderRadius: '16px',
             border: '3px solid var(--accent)',
-            boxShadow: '0 8px 30px rgba(0,0,0,0.6)',
+            boxShadow: '0 0 20px var(--accent-glow), 0 8px 30px rgba(0,0,0,0.6)',
             overflow: 'hidden',
-            background: '#111'
+            background: '#111',
+            flexShrink: 0
           }}>
             {currentStats.cardIcon ? (
               <img src={currentStats.cardIcon} alt="Riot Icon" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -170,32 +214,33 @@ export default function ValorantPage() {
             )}
           </div>
 
-          <div style={{ flex: 1, minWidth: '220px' }}>
+          <div style={{ flex: 1, minWidth: '240px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-              <h1 style={{ fontSize: '2.2rem', fontWeight: 900, margin: 0, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+              <h1 style={{ fontSize: '2.4rem', fontWeight: 900, margin: 0, textShadow: '0 2px 12px rgba(0,0,0,0.9)', letterSpacing: '-0.5px' }}>
                 {currentStats.riotId.split('#')[0]}
-                <span style={{ color: 'var(--accent)', fontSize: '1.2rem', fontWeight: 'bold', marginLeft: '4px' }}>
+                <span style={{ color: 'var(--accent)', fontSize: '1.4rem', fontWeight: 'bold', marginLeft: '4px' }}>
                   #{currentStats.riotId.split('#')[1]}
                 </span>
               </h1>
               <span style={{ 
-                background: 'rgba(255, 70, 85, 0.1)', 
+                background: 'rgba(255, 70, 85, 0.15)', 
                 border: '1px solid var(--accent)', 
                 color: 'var(--accent)', 
                 fontSize: '0.75rem',
                 fontWeight: 'bold',
-                padding: '3px 10px',
-                borderRadius: '20px'
+                padding: '3px 12px',
+                borderRadius: '20px',
+                letterSpacing: '0.5px'
               }}>
-                {currentStats.region.toUpperCase()} EAST
+                {displayRegion}
               </span>
             </div>
             
-            <p style={{ opacity: 0.6, margin: '8px 0 0 0', display: 'flex', gap: '16px', fontSize: '0.95rem' }}>
+            <p style={{ opacity: 0.8, margin: '8px 0 0 0', display: 'flex', gap: '16px', fontSize: '0.95rem', fontWeight: 600, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
               <span>Level <strong>{currentStats.accountLevel}</strong></span>
               <span>•</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: currentStats.isActive ? '#2ed573' : '#a4b0be' }}></span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: currentStats.isActive ? '#2ed573' : '#a4b0be', display: 'inline-block' }}></span>
                 {currentStats.isActive ? 'Active Session' : 'Offline'}
               </span>
             </p>
@@ -203,25 +248,25 @@ export default function ValorantPage() {
         </div>
       </div>
 
-      {/* 2. Grid Sections */}
+      {/* 2. Overview Grid (MMR Rank, Peak Rank, and KDA) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
         
-        {/* Competitive Rank Card */}
-        <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ width: '100px', height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        {/* Current Competitive Division Card */}
+        <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'rgba(255,255,255,0.01)' }}>
+          <div style={{ width: '90px', height: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {currentStats.rankIcon ? (
-              <img src={currentStats.rankIcon} alt={currentStats.rankName} style={{ width: '90px', height: '90px', objectFit: 'contain' }} />
+              <img src={currentStats.rankIcon} alt={currentStats.rankName} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
             ) : (
-              <span style={{ fontSize: '3rem' }}>🛡️</span>
+              <span style={{ fontSize: '2.5rem' }}>🛡️</span>
             )}
           </div>
           <div style={{ flex: 1 }}>
-            <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Current Rank Rating
+            <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Current Standing
             </span>
-            <h2 style={{ margin: '4px 0 8px 0', fontSize: '1.6rem', fontWeight: 800 }}>{currentStats.rankName}</h2>
+            <h2 style={{ margin: '2px 0 8px 0', fontSize: '1.6rem', fontWeight: 800 }}>{currentStats.rankName}</h2>
             
-            {/* RR Progress Bar */}
+            {/* progress bar */}
             <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden', marginBottom: '6px' }}>
               <div style={{ width: `${currentStats.rankRating}%`, height: '100%', background: 'var(--accent)', borderRadius: '4px' }} />
             </div>
@@ -232,42 +277,142 @@ export default function ValorantPage() {
           </div>
         </div>
 
-        {/* Combat Metrics Stats Box */}
-        <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        {/* Peak Achievement Card */}
+        {currentStats.highestRank && (
+          <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'rgba(255,255,255,0.01)' }}>
+            <div style={{ width: '90px', height: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'rgba(255,70,85,0.05)', borderRadius: '16px', border: '1px solid rgba(255,70,85,0.1)' }}>
+              <span style={{ fontSize: '2.5rem' }}>🏆</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                All-Time Peak Rank
+              </span>
+              <h2 style={{ margin: '2px 0 4px 0', fontSize: '1.6rem', fontWeight: 800, color: 'var(--accent)' }}>
+                {currentStats.highestRank.patched_tier}
+              </h2>
+              <p style={{ margin: 0, fontSize: '0.8rem', opacity: 0.5 }}>
+                Achieved in Season: <strong>{currentStats.highestRank.season.toUpperCase()}</strong>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Core Stats Overview */}
+        <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', background: 'rgba(255,255,255,0.01)' }}>
           <div>
-            <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>KD Ratio</span>
-            <h3 style={{ margin: '4px 0 0 0', fontSize: '1.8rem', fontWeight: 900, color: parseFloat(kdRatio) >= 1 ? '#2ed573' : '#ff4655' }}>
+            <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>KD Ratio</span>
+            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.6rem', fontWeight: 900, color: parseFloat(kdRatio) >= 1 ? '#2ed573' : '#ff4655' }}>
               {kdRatio}
             </h3>
-            <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>Avg KDA: {avgKills}/{avgDeaths}/{avgAssists}</span>
+            <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>Avg: {avgKills}/{avgDeaths}/{avgAssists}</span>
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>Headshot %</span>
-            <h3 style={{ margin: '4px 0 0 0', fontSize: '1.8rem', fontWeight: 900, color: 'var(--accent)' }}>
+            <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>Headshot %</span>
+            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.6rem', fontWeight: 900, color: 'var(--accent)' }}>
               {avgHS}%
             </h3>
-            <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>Average Accuracy</span>
+            <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>Accuracy rate</span>
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>Avg ACS</span>
-            <h3 style={{ margin: '4px 0 0 0', fontSize: '1.8rem', fontWeight: 900 }}>
+            <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>Avg ACS</span>
+            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.6rem', fontWeight: 900 }}>
               {avgACS}
             </h3>
-            <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>Combat Score</span>
+            <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>Combat score</span>
           </div>
           <div>
-            <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>Win Rate</span>
-            <h3 style={{ margin: '4px 0 0 0', fontSize: '1.8rem', fontWeight: 900, color: winRate >= 50 ? '#2ed573' : '#ff4655' }}>
+            <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>Win Rate</span>
+            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.6rem', fontWeight: 900, color: winRate >= 50 ? '#2ed573' : '#ff4655' }}>
               {winRate}%
             </h3>
-            <span style={{ fontSize: '0.75rem', opacity: 0.4 }}>Matches: {totalMatches}</span>
+            <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>Matches: {totalMatches}</span>
           </div>
         </div>
       </div>
 
-      {/* 3. Weapon Loadout Gallery */}
+      {/* 3. Middle Section: Playstyle Roles & MMR Graph area */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '3.5rem' }}>
+        
+        {/* Agent Role Playrate breakdown */}
+        <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', background: 'rgba(255,255,255,0.01)' }}>
+          <h3 style={{ margin: '0 0 1.2rem 0', fontSize: '1.2rem', fontWeight: 800, borderBottom: '1px solid var(--card-border)', paddingBottom: '0.5rem' }}>
+            🎭 Tactical Playstyle Roles
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {Object.entries(roleDistribution).map(([role, count]) => {
+              const percentage = totalMatches > 0 ? Math.round((count / totalMatches) * 100) : 0;
+              return (
+                <div key={role}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '4px', fontWeight: 'bold' }}>
+                    <span>{role}</span>
+                    <span style={{ opacity: 0.6 }}>{percentage}% ({count} games)</span>
+                  </div>
+                  <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div 
+                      style={{ 
+                        width: `${percentage}%`, 
+                        height: '100%', 
+                        background: role === 'Duelist' ? '#ff4655' : role === 'Initiator' ? '#3babff' : role === 'Sentinel' ? '#ffe15f' : '#2ed573',
+                        borderRadius: '3px' 
+                      }} 
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* MMR RR Progression Feed */}
+        <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', background: 'rgba(255,255,255,0.01)' }}>
+          <h3 style={{ margin: '0 0 1.2rem 0', fontSize: '1.2rem', fontWeight: 800, borderBottom: '1px solid var(--card-border)', paddingBottom: '0.5rem' }}>
+            📉 Recent Rating (RR) Timeline
+          </h3>
+          {currentStats.mmrHistory && currentStats.mmrHistory.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '4px' }}>
+              {currentStats.mmrHistory.slice(0, 5).map((history, idx) => (
+                <div 
+                  key={idx} 
+                  style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    background: 'rgba(0,0,0,0.15)', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px',
+                    border: '1px solid var(--card-border)'
+                  }}
+                >
+                  <div>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 'bold', display: 'block' }}>{history.map}</span>
+                    <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>{history.date.split('2026')[0] || history.date}</span>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span 
+                      style={{ 
+                        fontSize: '0.9rem', 
+                        fontWeight: 'bold', 
+                        color: history.rrChange >= 0 ? '#2ed573' : '#ff4655' 
+                      }}
+                    >
+                      {history.rrChange >= 0 ? `+${history.rrChange}` : history.rrChange} RR
+                    </span>
+                    <span style={{ fontSize: '0.7rem', opacity: 0.4, display: 'block' }}>{history.rrAfter} RR</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '2rem', opacity: 0.5, fontSize: '0.85rem' }}>
+              No rating logs available.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 4. Weapon Loadout Showcase */}
       <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span>🔫</span> Active Weapon Skins Loadout
+        <span>🔫</span> Active Weapon Skins Arsenal
       </h2>
 
       <div style={{ 
@@ -278,36 +423,42 @@ export default function ValorantPage() {
       }}>
         {Object.entries(currentStats.skins).map(([weapon, skinName]) => {
           const imgUrl = skinsImages[weapon];
+          const isSelected = selectedWeapon === weapon;
           return (
             <div 
               key={weapon} 
-              className="glass card-hover-effect" 
+              onClick={() => setSelectedWeapon(isSelected ? null : weapon)}
+              className={`glass card-hover-effect ${isSelected ? 'glow-active' : ''}`} 
               style={{ 
                 borderRadius: '16px', 
-                padding: '1.25rem', 
-                border: '1px solid var(--card-border)',
+                padding: '1.5rem', 
+                border: isSelected ? '1px solid var(--accent)' : '1px solid var(--card-border)',
                 background: 'rgba(255, 255, 255, 0.01)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                textAlign: 'center'
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
               }}
             >
               <span style={{ fontSize: '0.75rem', opacity: 0.4, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '0.5px' }}>
                 {weapon}
               </span>
               
-              {/* Skin Icon Frame */}
+              {/* Image Frame */}
               <div style={{ height: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: '10px' }}>
                 {imgUrl ? (
                   <img 
                     src={imgUrl} 
                     alt={skinName} 
                     style={{ 
-                      maxHeight: '80px', 
+                      maxHeight: '90px', 
                       maxWidth: '100%', 
                       objectFit: 'contain',
-                      filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.3))'
+                      filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.3))',
+                      transform: isSelected ? 'scale(1.1) rotate(-3deg)' : 'scale(1)',
+                      transition: 'transform 0.3s'
                     }} 
                   />
                 ) : (
@@ -315,7 +466,7 @@ export default function ValorantPage() {
                 )}
               </div>
 
-              <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold', color: '#fff' }}>
+              <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold', color: isSelected ? 'var(--accent)' : '#fff' }}>
                 {skinName}
               </h4>
             </div>
@@ -323,7 +474,7 @@ export default function ValorantPage() {
         })}
       </div>
 
-      {/* 4. Match History Log */}
+      {/* 5. Match History */}
       <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
         <span>🎮</span> Recent Match Performance
       </h2>
@@ -335,7 +486,6 @@ export default function ValorantPage() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           {currentStats.matches.map((m, idx) => {
-            const mapClass = m.map ? m.map.toLowerCase().replace(/[^a-z0-9]/g, '') : 'default';
             return (
               <div 
                 key={idx}
@@ -344,7 +494,7 @@ export default function ValorantPage() {
                   borderRadius: '16px',
                   border: `1px solid ${m.won ? 'rgba(46, 213, 115, 0.2)' : 'rgba(255, 70, 85, 0.2)'}`,
                   background: 'rgba(255, 255, 255, 0.01)',
-                  padding: '1.25rem 2rem',
+                  padding: '1.5rem 2rem',
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
                   gap: '1.5rem',
@@ -362,7 +512,7 @@ export default function ValorantPage() {
                   </div>
                 </div>
 
-                {/* Match Outcome Score */}
+                {/* Score */}
                 <div style={{ textAlign: 'center' }}>
                   <span style={{ 
                     background: m.won ? 'rgba(46, 213, 115, 0.1)' : 'rgba(255, 70, 85, 0.1)', 
@@ -394,7 +544,7 @@ export default function ValorantPage() {
                   </div>
                 </div>
 
-                {/* ACS score and Date */}
+                {/* ACS and Date */}
                 <div style={{ textAlign: 'right' }}>
                   <span style={{ fontSize: '0.75rem', opacity: 0.5, display: 'block' }}>Combat Score</span>
                   <span style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'monospace', color: '#fff' }}>{m.score} ACS</span>

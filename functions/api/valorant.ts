@@ -40,8 +40,8 @@ export async function onRequestGet(context: any) {
   const region = 'na';
 
   try {
-    // Run three requests concurrently at the edge to optimize speed
-    const [mmrRes, matchesRes, accountRes] = await Promise.all([
+    // Run four requests concurrently at the edge to optimize speed
+    const [mmrRes, matchesRes, accountRes, mmrHistoryRes] = await Promise.all([
       fetch(`https://api.henrikdev.xyz/valorant/v2/mmr/${region}/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`, {
         headers: { "Authorization": apiKey }
       }),
@@ -49,6 +49,9 @@ export async function onRequestGet(context: any) {
         headers: { "Authorization": apiKey }
       }),
       fetch(`https://api.henrikdev.xyz/valorant/v1/account/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`, {
+        headers: { "Authorization": apiKey }
+      }),
+      fetch(`https://api.henrikdev.xyz/valorant/v1/mmr-history/${region}/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`, {
         headers: { "Authorization": apiKey }
       })
     ]);
@@ -70,6 +73,22 @@ export async function onRequestGet(context: any) {
         accountLevel = data.data.account_level ?? 751;
         cardIcon = data.data.card?.small || null;
         cardIconWide = data.data.card?.wide || null;
+      }
+    }
+
+    let mmrHistoryData = [];
+    if (mmrHistoryRes.ok) {
+      const data = await mmrHistoryRes.json();
+      if (data.status === 200 && data.data) {
+        mmrHistoryData = data.data.map((h: any) => ({
+          matchId: h.match_id,
+          map: h.map?.name || 'Unknown Map',
+          rankName: h.currenttierpatched || 'Unknown Rank',
+          rrChange: h.mmr_change_to_last_game ?? 0,
+          rrAfter: h.ranking_in_tier ?? 0,
+          date: h.date || '',
+          elo: h.elo ?? 0
+        }));
       }
     }
 
@@ -145,7 +164,9 @@ export async function onRequestGet(context: any) {
         region: region.toUpperCase() + " East",
         isActive: true,
         matches: matchesData,
-        skins: skinsData
+        skins: skinsData,
+        highestRank: mmrData.highest_rank || null,
+        mmrHistory: mmrHistoryData
       }), {
         headers: { 
           'Content-Type': 'application/json',
