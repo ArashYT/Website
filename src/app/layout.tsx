@@ -54,6 +54,8 @@ export default function RootLayout({
               <h1 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--accent)', fontWeight: '900', letterSpacing: '-0.5px' }}>Arash</h1>
               <nav style={{ display: 'flex', gap: '1.2rem', fontWeight: 600, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <a href="/" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Home</a>
+                <a href="/valorant" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Valorant</a>
+                <a href="/minecraft" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Minecraft</a>
                 <a href="/gear" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Gear</a>
                 <a href="/clips" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Clips</a>
                 <a href="/links" style={{ color: 'var(--foreground)', textDecoration: 'none' }}>Links</a>
