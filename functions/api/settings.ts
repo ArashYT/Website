@@ -53,6 +53,26 @@ export async function onRequestGet(context: any) {
         soundboard: {
           enabled: false
         },
+        discordWidgetId: '1083431693836173423',
+        spotify: {
+          enabled: true,
+          songName: 'K/DA - POP/STARS',
+          artist: 'Madison Beer, (G)I-DLE, Jaira Burns'
+        },
+        milestones: {
+          enabled: true,
+          title: 'Charity Sub Goal',
+          current: 68,
+          goal: 100
+        },
+        channelPoints: {
+          enabled: true,
+          items: [
+            { name: '💦 Hydrate', cost: 250, count: 184 },
+            { name: '🎙️ Voice Changer', cost: 1000, count: 57 },
+            { name: '🥊 1v1 Me in Custom', cost: 5000, count: 12 }
+          ]
+        },
         socials: {
           youtube: 'https://youtube.com/@arashyt',
           twitch: 'https://twitch.tv/ArashLIVE',

@@ -16,6 +16,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import KonamiCode from "@/components/KonamiCode";
 import ScrollEnhancements from "@/components/ScrollEnhancements";
 import { ToastProvider } from "@/components/Toast";
+import LayoutClientHelper from "@/components/LayoutClientHelper";
 
 export default function RootLayout({
   children,
@@ -47,6 +48,7 @@ export default function RootLayout({
           })();
         `}} />
         <ToastProvider>
+          <LayoutClientHelper />
           <ScrollEnhancements />
           <KonamiCode />
           <div className="layout-wrapper">

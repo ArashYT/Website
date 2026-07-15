@@ -1,6 +1,12 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
+interface ChannelPointItem {
+  name: string;
+  cost: number;
+  count: number;
+}
+
 interface SiteConfig {
   theme: {
     defaultTheme: string;
@@ -56,6 +62,22 @@ interface SiteConfig {
     instagram: string;
     x: string;
   };
+  discordWidgetId?: string;
+  spotify?: {
+    enabled: boolean;
+    songName: string;
+    artist: string;
+  };
+  milestones?: {
+    enabled: boolean;
+    title: string;
+    current: number;
+    goal: number;
+  };
+  channelPoints?: {
+    enabled: boolean;
+    items: ChannelPointItem[];
+  };
 }
 
 export default function WebsiteManager() {
@@ -89,6 +111,34 @@ export default function WebsiteManager() {
               enabled: false,
               publisherId: '',
               adSlotId: ''
+            };
+          }
+          if (!data.discordWidgetId) {
+            data.discordWidgetId = '1083431693836173423';
+          }
+          if (!data.spotify) {
+            data.spotify = {
+              enabled: true,
+              songName: 'K/DA - POP/STARS',
+              artist: 'Madison Beer, (G)I-DLE, Jaira Burns'
+            };
+          }
+          if (!data.milestones) {
+            data.milestones = {
+              enabled: true,
+              title: 'Charity Sub Goal',
+              current: 68,
+              goal: 100
+            };
+          }
+          if (!data.channelPoints) {
+            data.channelPoints = {
+              enabled: true,
+              items: [
+                { name: '💦 Hydrate', cost: 250, count: 184 },
+                { name: '🎙️ Voice Changer', cost: 1000, count: 57 },
+                { name: '🥊 1v1 Me in Custom', cost: 5000, count: 12 }
+              ]
             };
           }
           setConfig(data);
@@ -771,6 +821,245 @@ export default function WebsiteManager() {
                         }} 
                       />
                     </div>
+                  </div>
+                </div>
+
+                {/* Discord Widget Config */}
+                <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
+                  <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', color: config.theme.accentColor }}>💬 Discord Server Widget</h3>
+                  <p style={{ opacity: 0.6, fontSize: '0.85rem', marginBottom: '1rem' }}>Configure the Discord Server ID to display online members and active voice channels.</p>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Discord Server/Guild ID</label>
+                    <input 
+                      type="text" 
+                      value={config.discordWidgetId || ''} 
+                      onChange={(e) => handleChange('discordWidgetId', e.target.value)} 
+                      style={{
+                        width: '100%',
+                        padding: '0.8rem',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: 'rgba(0,0,0,0.2)',
+                        color: '#fff',
+                        fontSize: '1rem',
+                        outline: 'none'
+                      }} 
+                    />
+                  </div>
+                </div>
+
+                {/* Spotify Config */}
+                <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: config.theme.accentColor }}>🎵 Spotify Live Now Playing</h3>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={config.spotify?.enabled || false} 
+                        onChange={(e) => handleChange('spotify.enabled', e.target.checked)}
+                      />
+                      <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>Enable Widget</span>
+                    </label>
+                  </div>
+                  <p style={{ opacity: 0.6, fontSize: '0.85rem', marginBottom: '1rem' }}>Manually override or sync the track currently playing in your stream header ticker.</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Song Name</label>
+                      <input 
+                        type="text" 
+                        value={config.spotify?.songName || ''} 
+                        onChange={(e) => handleChange('spotify.songName', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Artist(s)</label>
+                      <input 
+                        type="text" 
+                        value={config.spotify?.artist || ''} 
+                        onChange={(e) => handleChange('spotify.artist', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Milestones Config */}
+                <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: config.theme.accentColor }}>🏆 Stream Milestones Goal Tracker</h3>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={config.milestones?.enabled || false} 
+                        onChange={(e) => handleChange('milestones.enabled', e.target.checked)}
+                      />
+                      <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>Enable Tracker</span>
+                    </label>
+                  </div>
+                  <p style={{ opacity: 0.6, fontSize: '0.85rem', marginBottom: '1rem' }}>Display a stream subscriber or charity progress goal bar on the index page.</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Goal Title / Description</label>
+                      <input 
+                        type="text" 
+                        value={config.milestones?.title || ''} 
+                        onChange={(e) => handleChange('milestones.title', e.target.value)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Current Value</label>
+                      <input 
+                        type="number" 
+                        value={config.milestones?.current ?? 0} 
+                        onChange={(e) => handleChange('milestones.current', parseInt(e.target.value) || 0)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.4rem', fontWeight: 'bold' }}>Target Goal</label>
+                      <input 
+                        type="number" 
+                        value={config.milestones?.goal ?? 100} 
+                        onChange={(e) => handleChange('milestones.goal', parseInt(e.target.value) || 0)} 
+                        style={{
+                          width: '100%',
+                          padding: '0.8rem',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '1rem',
+                          outline: 'none'
+                        }} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Twitch Channel Points Config */}
+                <div style={{ marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.1rem', color: config.theme.accentColor }}>💎 Twitch Channel Point Rewards</h3>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={config.channelPoints?.enabled || false} 
+                        onChange={(e) => handleChange('channelPoints.enabled', e.target.checked)}
+                      />
+                      <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>Enable Rewards Catalog</span>
+                    </label>
+                  </div>
+                  <p style={{ opacity: 0.6, fontSize: '0.85rem', marginBottom: '1rem' }}>Display a curated list of custom channel point rewards and total redemptions on the homepage.</p>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {config.channelPoints?.items?.map((item, idx) => (
+                      <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '1rem', background: 'rgba(0,0,0,0.15)', padding: '1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', opacity: 0.7, marginBottom: '0.2rem', fontWeight: 'bold' }}>Reward Title</label>
+                          <input 
+                            type="text" 
+                            value={item.name} 
+                            onChange={(e) => {
+                              const newItems = [...config.channelPoints!.items];
+                              newItems[idx].name = e.target.value;
+                              handleChange('channelPoints.items', newItems);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '0.6rem',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255,255,255,0.1)',
+                              background: 'rgba(0,0,0,0.2)',
+                              color: '#fff',
+                              fontSize: '0.95rem',
+                              outline: 'none'
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', opacity: 0.7, marginBottom: '0.2rem', fontWeight: 'bold' }}>Point Cost</label>
+                          <input 
+                            type="number" 
+                            value={item.cost} 
+                            onChange={(e) => {
+                              const newItems = [...config.channelPoints!.items];
+                              newItems[idx].cost = parseInt(e.target.value) || 0;
+                              handleChange('channelPoints.items', newItems);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '0.6rem',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255,255,255,0.1)',
+                              background: 'rgba(0,0,0,0.2)',
+                              color: '#fff',
+                              fontSize: '0.95rem',
+                              outline: 'none'
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.75rem', opacity: 0.7, marginBottom: '0.2rem', fontWeight: 'bold' }}>Redeemed Count</label>
+                          <input 
+                            type="number" 
+                            value={item.count} 
+                            onChange={(e) => {
+                              const newItems = [...config.channelPoints!.items];
+                              newItems[idx].count = parseInt(e.target.value) || 0;
+                              handleChange('channelPoints.items', newItems);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '0.6rem',
+                              borderRadius: '6px',
+                              border: '1px solid rgba(255,255,255,0.1)',
+                              background: 'rgba(0,0,0,0.2)',
+                              color: '#fff',
+                              fontSize: '0.95rem',
+                              outline: 'none'
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

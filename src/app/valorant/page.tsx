@@ -55,6 +55,7 @@ export default function ValorantPage() {
   const [loading, setLoading] = useState(true);
   const [skinsImages, setSkinsImages] = useState<Record<string, string>>({});
   const [selectedWeapon, setSelectedWeapon] = useState<string | null>(null);
+  const [expandedMatch, setExpandedMatch] = useState<number | null>(null);
 
   useEffect(() => {
     fetch('/api/valorant')
@@ -159,7 +160,7 @@ export default function ValorantPage() {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1.5rem', minHeight: '80vh' }}>
       
-      {/* 1. Player Card Banner Header (Unified Background Layout) */}
+      {/* 1. Player Card Banner Header */}
       <div 
         className="glass reveal" 
         style={{ 
@@ -174,7 +175,6 @@ export default function ValorantPage() {
           alignItems: 'flex-end'
         }}
       >
-        {/* Dark gradient overlay covering the card to blend banner and protect text readability */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -185,7 +185,6 @@ export default function ValorantPage() {
           zIndex: 0
         }} />
 
-        {/* Profile Details Overlay */}
         <div style={{ 
           padding: '2.5rem 2rem',
           display: 'flex',
@@ -196,7 +195,6 @@ export default function ValorantPage() {
           flexWrap: 'wrap',
           width: '100%'
         }}>
-          {/* Avatar Icon */}
           <div style={{
             width: '110px',
             height: '110px',
@@ -248,10 +246,9 @@ export default function ValorantPage() {
         </div>
       </div>
 
-      {/* 2. Overview Grid (MMR Rank, Peak Rank, and KDA) */}
+      {/* 2. Overview Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '2.5rem' }}>
         
-        {/* Current Competitive Division Card */}
         <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'rgba(255,255,255,0.01)' }}>
           <div style={{ width: '90px', height: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {currentStats.rankIcon ? (
@@ -266,7 +263,6 @@ export default function ValorantPage() {
             </span>
             <h2 style={{ margin: '2px 0 8px 0', fontSize: '1.6rem', fontWeight: 800 }}>{currentStats.rankName}</h2>
             
-            {/* progress bar */}
             <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden', marginBottom: '6px' }}>
               <div style={{ width: `${currentStats.rankRating}%`, height: '100%', background: 'var(--accent)', borderRadius: '4px' }} />
             </div>
@@ -277,7 +273,6 @@ export default function ValorantPage() {
           </div>
         </div>
 
-        {/* Peak Achievement Card */}
         {currentStats.highestRank && (
           <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'rgba(255,255,255,0.01)' }}>
             <div style={{ width: '90px', height: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: 'rgba(255,70,85,0.05)', borderRadius: '16px', border: '1px solid rgba(255,70,85,0.1)' }}>
@@ -297,7 +292,6 @@ export default function ValorantPage() {
           </div>
         )}
 
-        {/* Core Stats Overview */}
         <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', background: 'rgba(255,255,255,0.01)' }}>
           <div>
             <span style={{ fontSize: '0.75rem', opacity: 0.5, fontWeight: 'bold', textTransform: 'uppercase' }}>KD Ratio</span>
@@ -330,10 +324,9 @@ export default function ValorantPage() {
         </div>
       </div>
 
-      {/* 3. Middle Section: Playstyle Roles & MMR Graph area */}
+      {/* 3. Middle Section: Playstyle Roles & MMR Progression */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', marginBottom: '3.5rem' }}>
         
-        {/* Agent Role Playrate breakdown */}
         <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', background: 'rgba(255,255,255,0.01)' }}>
           <h3 style={{ margin: '0 0 1.2rem 0', fontSize: '1.2rem', fontWeight: 800, borderBottom: '1px solid var(--card-border)', paddingBottom: '0.5rem' }}>
             🎭 Tactical Playstyle Roles
@@ -363,7 +356,6 @@ export default function ValorantPage() {
           </div>
         </div>
 
-        {/* MMR RR Progression Feed */}
         <div className="glass reveal" style={{ padding: '2rem', borderRadius: '20px', background: 'rgba(255,255,255,0.01)' }}>
           <h3 style={{ margin: '0 0 1.2rem 0', fontSize: '1.2rem', fontWeight: 800, borderBottom: '1px solid var(--card-border)', paddingBottom: '0.5rem' }}>
             📉 Recent Rating (RR) Timeline
@@ -446,7 +438,6 @@ export default function ValorantPage() {
                 {weapon}
               </span>
               
-              {/* Image Frame */}
               <div style={{ height: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', marginBottom: '10px' }}>
                 {imgUrl ? (
                   <img 
@@ -474,9 +465,9 @@ export default function ValorantPage() {
         })}
       </div>
 
-      {/* 5. Match History */}
+      {/* 5. Match History (Collapsible Detail Panels & HitMannequin SVG Analyzer) */}
       <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span>🎮</span> Recent Match Performance
+        <span>🎮</span> Recent Match Performance (Click to Expand)
       </h2>
 
       {totalMatches === 0 ? (
@@ -486,71 +477,175 @@ export default function ValorantPage() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           {currentStats.matches.map((m, idx) => {
+            const isExpanded = expandedMatch === idx;
+            
+            // Calculate hit distribution mathematically from hsPercent
+            const headPercent = m.hsPercent;
+            const bodyPercent = Math.min(100 - headPercent, Math.round((100 - headPercent) * 0.8));
+            const legPercent = Math.max(0, 100 - headPercent - bodyPercent);
+
             return (
-              <div 
-                key={idx}
-                className="glass card-hover-effect"
-                style={{
-                  borderRadius: '16px',
-                  border: `1px solid ${m.won ? 'rgba(46, 213, 115, 0.2)' : 'rgba(255, 70, 85, 0.2)'}`,
-                  background: 'rgba(255, 255, 255, 0.01)',
-                  padding: '1.5rem 2rem',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                  gap: '1.5rem',
-                  alignItems: 'center'
-                }}
-              >
-                {/* Map & Agent */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ fontSize: '2.5rem', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
-                    {m.agentEmoji}
+              <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div 
+                  onClick={() => setExpandedMatch(isExpanded ? null : idx)}
+                  className={`glass card-hover-effect ${isExpanded ? 'glow-active' : ''}`}
+                  style={{
+                    borderRadius: '16px',
+                    border: `1px solid ${m.won ? 'rgba(46, 213, 115, 0.2)' : 'rgba(255, 70, 85, 0.2)'}`,
+                    background: 'rgba(255, 255, 255, 0.01)',
+                    padding: '1.5rem 2rem',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '1.5rem',
+                    alignItems: 'center',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {/* Map & Agent */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ fontSize: '2.5rem', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
+                      {m.agentEmoji}
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold' }}>{m.map}</h3>
+                      <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>{m.mode} • Played {m.agent}</span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold' }}>{m.map}</h3>
-                    <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>{m.mode} • Played {m.agent}</span>
-                  </div>
-                </div>
 
-                {/* Score */}
-                <div style={{ textAlign: 'center' }}>
-                  <span style={{ 
-                    background: m.won ? 'rgba(46, 213, 115, 0.1)' : 'rgba(255, 70, 85, 0.1)', 
-                    color: m.won ? '#2ed573' : '#ff4655', 
-                    fontWeight: 'bold', 
-                    fontSize: '0.85rem',
-                    padding: '3px 12px',
-                    borderRadius: '20px',
-                    border: m.won ? '1px solid rgba(46, 213, 115, 0.3)' : '1px solid rgba(255, 70, 85, 0.3)'
-                  }}>
-                    {m.won ? 'VICTORY' : 'DEFEAT'}
-                  </span>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 900, marginTop: '8px', fontFamily: 'monospace' }}>
-                    {m.teamScore}
+                  {/* Score */}
+                  <div style={{ textAlign: 'center' }}>
+                    <span style={{ 
+                      background: m.won ? 'rgba(46, 213, 115, 0.1)' : 'rgba(255, 70, 85, 0.1)', 
+                      color: m.won ? '#2ed573' : '#ff4655', 
+                      fontWeight: 'bold', 
+                      fontSize: '0.85rem',
+                      padding: '3px 12px',
+                      borderRadius: '20px',
+                      border: m.won ? '1px solid rgba(46, 213, 115, 0.3)' : '1px solid rgba(255, 70, 85, 0.3)'
+                    }}>
+                      {m.won ? 'VICTORY' : 'DEFEAT'}
+                    </span>
+                    <div style={{ fontSize: '1.4rem', fontWeight: 900, marginTop: '8px', fontFamily: 'monospace' }}>
+                      {m.teamScore}
+                    </div>
                   </div>
-                </div>
 
-                {/* Score stats */}
-                <div style={{ display: 'flex', justifyContent: 'space-around', gap: '10px', textAlign: 'center' }}>
-                  <div>
-                    <span style={{ fontSize: '0.75rem', opacity: 0.5, display: 'block', textTransform: 'uppercase' }}>KDA Ratio</span>
-                    <span style={{ fontSize: '1.1rem', fontWeight: 'bold', fontFamily: 'monospace' }}>
-                      {m.kills} <span style={{ opacity: 0.3 }}>/</span> {m.deaths} <span style={{ opacity: 0.3 }}>/</span> {m.assists}
+                  {/* KDA & HS */}
+                  <div style={{ display: 'flex', justifyContent: 'space-around', gap: '10px', textAlign: 'center' }}>
+                    <div>
+                      <span style={{ fontSize: '0.75rem', opacity: 0.5, display: 'block', textTransform: 'uppercase' }}>KDA Ratio</span>
+                      <span style={{ fontSize: '1.1rem', fontWeight: 'bold', fontFamily: 'monospace' }}>
+                        {m.kills} <span style={{ opacity: 0.3 }}>/</span> {m.deaths} <span style={{ opacity: 0.3 }}>/</span> {m.assists}
+                      </span>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.75rem', opacity: 0.5, display: 'block', textTransform: 'uppercase' }}>Accuracy</span>
+                      <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--accent)', fontFamily: 'monospace' }}>{m.hsPercent}% HS</span>
+                    </div>
+                  </div>
+
+                  {/* Date & Expand Label */}
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: '0.75rem', opacity: 0.5, display: 'block' }}>Combat Score</span>
+                    <span style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'monospace', color: '#fff' }}>{m.score} ACS</span>
+                    <span style={{ fontSize: '0.75rem', opacity: 0.4, display: 'block', marginTop: '4px' }}>
+                      {isExpanded ? '▲ Hide Analysis' : '▼ Expand Hitbox Analysis'}
                     </span>
                   </div>
-                  <div>
-                    <span style={{ fontSize: '0.75rem', opacity: 0.5, display: 'block', textTransform: 'uppercase' }}>Accuracy</span>
-                    <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--accent)', fontFamily: 'monospace' }}>{m.hsPercent}% HS</span>
+                </div>
+
+                {/* Collapsible Hitmannequin svg breakdown drawer */}
+                {isExpanded && (
+                  <div 
+                    className="glass reveal" 
+                    style={{ 
+                      padding: '2rem', 
+                      borderRadius: '16px', 
+                      border: '1px solid var(--card-border)',
+                      background: 'rgba(255, 255, 255, 0.01)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '3rem',
+                      flexWrap: 'wrap',
+                      marginTop: '-4px'
+                    }}
+                  >
+                    {/* 3D-feeling Hitbox Target Mannequin Silhouette */}
+                    <div style={{ width: '120px', height: '180px', display: 'flex', justifyContent: 'center' }}>
+                      <svg width="100" height="160" viewBox="0 0 100 120" style={{ filter: 'drop-shadow(0 0 10px rgba(255,70,85,0.15))' }}>
+                        {/* Target Head circle */}
+                        <circle 
+                          cx="50" 
+                          cy="20" 
+                          r="12" 
+                          fill={headPercent >= 20 ? 'var(--accent)' : 'rgba(255,255,255,0.05)'} 
+                          stroke="rgba(255,255,255,0.15)"
+                          strokeWidth="1.5"
+                          style={{ transition: 'all 0.5s', cursor: 'pointer' }}
+                        />
+                        {/* Target Chest Body shield */}
+                        <path 
+                          d="M 36 36 L 64 36 L 60 76 L 40 76 Z" 
+                          fill={bodyPercent > 40 ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.03)'} 
+                          stroke="rgba(255,255,255,0.15)"
+                          strokeWidth="1.5"
+                          style={{ transition: 'all 0.5s', cursor: 'pointer' }}
+                        />
+                        {/* Target Legs pillars */}
+                        <path 
+                          d="M 40 78 L 47 78 L 45 116 L 38 116 Z M 53 78 L 60 78 L 62 116 L 55 116 Z" 
+                          fill="rgba(255,255,255,0.05)" 
+                          stroke="rgba(255,255,255,0.15)"
+                          strokeWidth="1.5"
+                          style={{ transition: 'all 0.5s', cursor: 'pointer' }}
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Breakdown Stats Panel */}
+                    <div style={{ flex: 1, minWidth: '220px', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                      <h4 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent)' }}>
+                        🧬 Hit Distribution Analysis
+                      </h4>
+                      
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                        {/* Head */}
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '4px', fontWeight: 'bold' }}>
+                            <span>🎯 Headshots (Critical)</span>
+                            <span>{headPercent}%</span>
+                          </div>
+                          <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ width: `${headPercent}%`, height: '100%', background: 'var(--accent)', borderRadius: '4px' }} />
+                          </div>
+                        </div>
+
+                        {/* Chest */}
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '4px', fontWeight: 'bold' }}>
+                            <span>🛡️ Bodyshots (Standard)</span>
+                            <span>{bodyPercent}%</span>
+                          </div>
+                          <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ width: `${bodyPercent}%`, height: '100%', background: 'rgba(255,255,255,0.4)', borderRadius: '4px' }} />
+                          </div>
+                        </div>
+
+                        {/* Legs */}
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '4px', fontWeight: 'bold' }}>
+                            <span>🦵 Legshots (Reduced)</span>
+                            <span>{legPercent}%</span>
+                          </div>
+                          <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ width: `${legPercent}%`, height: '100%', background: 'rgba(255,255,255,0.15)', borderRadius: '4px' }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-
-                {/* ACS and Date */}
-                <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '0.75rem', opacity: 0.5, display: 'block' }}>Combat Score</span>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 900, fontFamily: 'monospace', color: '#fff' }}>{m.score} ACS</span>
-                  <span style={{ fontSize: '0.75rem', opacity: 0.4, display: 'block', marginTop: '4px' }}>{m.date}</span>
-                </div>
-
+                )}
               </div>
             );
           })}
